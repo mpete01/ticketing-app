@@ -13,6 +13,7 @@
     margin-top: 2vh;
     margin-bottom: 2vh;
     font-size: 2.5vh;
+    color: black;
 }
 
 input {
@@ -36,11 +37,17 @@ input {
     border: none;
     height: fit-content;
     width: fit-content;
+    cursor: pointer;
 }
 
 .login-form-submitButton {
-    margin-bottom: 1vh;
     width: 12vw;
+    height: 4vh;
     color: white;
     background-color: #646cff;
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 20px 20px 20px 20px;
+    margin-top: 3vh;
+    font-size: 1.5rem;
 }

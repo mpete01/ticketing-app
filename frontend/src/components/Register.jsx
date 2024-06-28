@@ -13,14 +13,18 @@ function Register(){
     }
     
     const submitRegistration = () => {
-        console.log(document.getElementById("username-password").value)
-        console.log(inputValue)
+        if(inputValue === "" || document.getElementById("register-username").value === ""){
+            alert("Enter a username and a password")
+        } else {
+            console.log(document.getElementById("register-username").value)
+            console.log(inputValue)
+        }
     }
 
     return <div>
         <div className="register-form">
             <div className="register-form-title">Register</div>
-            <input type="text" className="register-form-username input" id="username-password" placeholder="Enter a username" /><br />
+            <input type="text" className="register-form-username input" id="register-username" placeholder="Enter a username" /><br />
             <div className="password-input-field">
                 <input type={inputType} value={inputValue} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={changeVisibility} />
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>

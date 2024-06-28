@@ -12,11 +12,14 @@ function Login(){
         setInputType(inputType === "password" ? "text" : "password")
     }
     
-    const submitRegistration = () => {
-        console.log(document.getElementById("username-login").value)
-        console.log(inputValue)
+    const submitLogin = () => {
+        if(inputValue === "" || document.getElementById("username-login").value === ""){
+            alert("Username or password incorrect")
+        } else {
+            console.log(document.getElementById("username-login").value)
+            console.log(inputValue)
+        }
     }
-
     return <div>
         <div className="login-form">
             <div className="login-form-title">Login</div>
@@ -25,7 +28,7 @@ function Login(){
                 <input type={inputType} value={inputValue} className="login-form-password input" id="login-password" placeholder="Enter your password" onChange={changeVisibility} />
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
             </div><br />
-            <button type="submit" className="login-form-submitButton" onClick={submitRegistration}>Login</button>
+            <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
         </div>    
     </div>
 }
