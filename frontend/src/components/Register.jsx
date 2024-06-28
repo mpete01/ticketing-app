@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import '../styles/register.css';
 
 function Register(){
+    const [inputType, setInputType] = useState("password")
+    const [inputValue, setInputValue] = useState("")
+
+    const changeVisibility = (event) => {
+        setInputValue(event.target.value)
+    }
+    const toggleInputType = () => {
+        setInputType(inputType === "password" ? "text" : "password")
+    }
+    
+    const submitRegistration = () => {
+        console.log(document.getElementById("username-password").value)
+        console.log(inputValue)
+    }
+
     return <div>
-        <div className="title">Register</div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate sunt provident quis possimus eveniet repudiandae minus ipsam, quos consequatur sint cumque magnam a eos deserunt nobis labore quisquam, ipsa deleniti.</p>
+        <div className="register-form">
+            <div className="register-form-title">Register</div>
+            <input type="text" className="register-form-username input" id="username-password" placeholder="Enter a username" /><br />
+            <div className="password-input-field">
+                <input type={inputType} value={inputValue} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={changeVisibility} />
+                <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
+            </div><br />
+            <button type="submit" className="register-form-submitButton" onClick={submitRegistration}>Register</button>
+        </div>    
     </div>
 }
 

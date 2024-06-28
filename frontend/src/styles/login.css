@@ -2,14 +2,14 @@
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-.register-form {
+.login-form {
     border: 1px solid black;
     border-radius: 20px 20px 20px 20px;
     height: 30vh;
     width: 20vw;
 }
 
-.register-form-title {
+.login-form-title {
     margin-top: 2vh;
     margin-bottom: 2vh;
     font-size: 2.5vh;
@@ -38,7 +38,7 @@ input {
     width: fit-content;
 }
 
-.register-form-submitButton {
+.login-form-submitButton {
     margin-bottom: 1vh;
     width: 12vw;
     color: white;
