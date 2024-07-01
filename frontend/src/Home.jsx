@@ -11,18 +11,23 @@ function Homepage() {
         } else {
             console.log(`Written note: ${userInput}`)
         }
-        let newRow = tablebody.insertRow(-1)
-        let newCell = newRow.insertCell(0);
-        let newText = document.createTextNode(userInput);
-        newCell.appendChild(newText);
+        if(userInput === ""){
+            console.log("null")
+        } else {
+            let newRow = tablebody.insertRow(-1)
+            let newCell = newRow.insertCell(0);
+            let newText = document.createTextNode(userInput);
+            newCell.appendChild(newText);
+        }
     }
     function editElement(){
-        
+
     }
 
     function deleteElement(){
 
     }
+    
 
     return <div>
         <div className="container">
