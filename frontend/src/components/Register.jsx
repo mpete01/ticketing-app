@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import '../styles/register.css';
+import { Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './Login'
 
 function Register(){
     const [inputType, setInputType] = useState("password")
@@ -30,6 +33,7 @@ function Register(){
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
             </div><br />
             <button type="submit" className="register-form-submitButton" onClick={submitRegistration}>Register</button>
+            <p>Already have an acoount?</p><Link to="/Login">Log in</Link>
         </div>    
     </div>
 }

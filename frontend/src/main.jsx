@@ -1,13 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-//import { BrowserRouter, Rputes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 import Register from './components/Register'
 import Login from './components/Login'
 import Homepage from './Home.jsx'
 
+
 //  <React.StrictMode>  </React.StrictMode>
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Homepage />
+  <BrowserRouter>
+    <Routes>
+      <Route path='/' element={<Register/>}/>
+      <Route path="/Login" element={<Login />} />
+    </Routes>
+  </BrowserRouter>
 )
