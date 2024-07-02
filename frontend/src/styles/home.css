@@ -1,66 +1,67 @@
-:root {
-    color: black;
+body {
+    background: linear-gradient(darkblue, lightblue)
 }
 
-.container {
-    /*height: 50vh;
-    width: 60vw;*/
-    border-radius: 20px 20px 20px 20px;
-    padding: 0.5vw;
-}
-
-.new-input_inputfield {
-    border: 1px solid lightgrey;
+.add-new-task {
     margin-bottom: 2vh;
-    padding: 0.3vw;
-    width: auto;
+}
+.new-task {
+    min-width: 3vw;
+    min-height: 1.5vh;
+    width: 15vw;
+    margin-right: 2vw;
+    height: 2vh;
+    border: 1px solid black;
+    border-radius: 1vw 1vw 1vw 1vw;
+    padding: 1vh;
 }
 
-.new-input_submitBtn {
+.add-new-task-btn {
+    background-color: rgb(185, 26, 185);
+    color: white;
+    font-weight: bold;
+    border: 0px;
+    padding: 1.3vh;
+    border-radius: 1vw 1vw 1vw 1vw;
+    cursor: pointer;
+}
+
+ol {
+    padding: 0px;
+}
+
+li {
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 1vw;
+    margin-bottom: 1vh;
+    border-bottom: 1px solid lightgrey;
+    display: flex;
+    align-items: center;
+}
+
+.text {
+    flex: 1;
+}
+
+.task-button {
+    font-weight: bold;
+    border: none;
+    margin-right: 1vw;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.move-task {
     background-color: blue;
-    padding: 0.3vw;
-    font-size: 1.7vh;
-    box-shadow: none;
-    cursor: pointer;
-    border-radius: 5px 5px 5px 5px;
-    font-weight: bold;
-    border: 0px;
-    color: white;
-    margin-left: 2vw;
+    border: none;
+    margin-right: 1vw;
 }
 
-thead {
-    background-color: lightgrey;
-}
-
-tr:nth-child(even) {
-    background-color: lightgrey;
-    border-collapse: collapse;
-}
-
-td {
-    padding: 0.5vh;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.created-notes-table_data_del {
+.delete-task {
     background-color: red;
-    margin-left: 0.2vh;
-    color: white;
-}
-
-.created-notes-table_data_edit {
-    background-color: rgb(118, 186, 209);
-}
-
-.table-button {
-    padding: 0.3vw;
-    font-size: 1.7vh;
-    box-shadow: none;
-    cursor: pointer;
-    border-radius: 5px 5px 5px 5px;
-    font-weight: bold;
-    border: 0px;
-    color: white;
+    margin-right: 1vw;
+    margin-left: 2vw;
 }
