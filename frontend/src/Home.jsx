@@ -4,7 +4,6 @@ import './styles/home.css';
 function Homepage() {
     const [newTask, setNewTask] = useState("")
     const [tasks, setTasks] = useState(["balls", "cum xd", "beer", "women:("])
-    const [completed, setCompleted] = useState("")
 
     function handleInputChange(event) {
         setNewTask(event.target.value)

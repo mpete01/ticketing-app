@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import '../styles/login.css';
+import Register from './Register'
+import Homepage from "../Home";
+import { Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function Login(){
     const [inputType, setInputType] = useState("password")
@@ -13,9 +17,11 @@ function Login(){
     }
     
     const submitLogin = () => {
-        if(inputValue === "" || document.getElementById("username-login").value === ""){
-            alert("Username or password incorrect")
-        } else {
+        /*if(document.getElementById("username-login").value === "" || inputValue === ""){
+            alert("Username or password incorrect")}*/
+        if (document.getElementById("username-login").value === "user" && inputValue === "password"){
+            localStorage.setItem("username", `${document.getElementById("username-login").value}`)
+            localStorage.setItem("password", inputValue)
             console.log(document.getElementById("username-login").value)
             console.log(inputValue)
         }
@@ -29,6 +35,7 @@ function Login(){
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
             </div><br />
             <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
+            <p>Don't have an account? <Link to="/Register">Register</Link></p>
         </div>    
     </div>
 }
