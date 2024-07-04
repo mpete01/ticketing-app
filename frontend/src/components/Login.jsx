@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import '../styles/login.css';
 import Register from './Register'
 import Homepage from "../Home";
@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 function Login(){
     const [inputType, setInputType] = useState("password")
     const [inputValue, setInputValue] = useState("")
+    const [data, setData] = useState({})
 
     const changeVisibility = (event) => {
         setInputValue(event.target.value)
@@ -15,7 +16,6 @@ function Login(){
     const toggleInputType = () => {
         setInputType(inputType === "password" ? "text" : "password")
     }
-    
     const submitLogin = () => {
         /*if(document.getElementById("username-login").value === "" || inputValue === ""){
             alert("Username or password incorrect")}*/
@@ -28,6 +28,9 @@ function Login(){
             alert("Enter a Username and a Password")
         }
     }
+    
+
+
     return <div>
         <div className="login-form">
             <div className="login-form-title">Login</div>
