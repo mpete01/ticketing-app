@@ -19,11 +19,13 @@ function Login(){
     const submitLogin = () => {
         /*if(document.getElementById("username-login").value === "" || inputValue === ""){
             alert("Username or password incorrect")}*/
-        if (document.getElementById("username-login").value === "user" && inputValue === "password"){
+        if (document.getElementById("username-login").value !== "" && inputValue !== ""){
             localStorage.setItem("username", `${document.getElementById("username-login").value}`)
             localStorage.setItem("password", inputValue)
             console.log(document.getElementById("username-login").value)
             console.log(inputValue)
+        } else if(inputValue === "" || document.getElementById("username-login").value === ""){
+            alert("Enter a Username and a Password")
         }
     }
     return <div>

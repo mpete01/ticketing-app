@@ -33,7 +33,7 @@ function Register(){
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
             </div><br />
             <button type="submit" className="register-form-submitButton" onClick={submitRegistration}>Register</button>
-            <p>Already have an acoount? <Link to="/Login"> Log in</Link></p>
+            <p>Already have an acoount?<Link to="/Login"> Log in</Link></p>
         </div>    
     </div>
 }

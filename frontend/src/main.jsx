@@ -12,9 +12,9 @@ import Homepage from './Home.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
-      <Route path='/' element={<Login />} />
+      <Route path='/' element={<Homepage />} />
       <Route path="/Register" element={<Register />} />
-      <Route path='/Homepage' element={<Homepage />}/>
+      <Route path='/Login' element={<Login />}/>
     </Routes>
   </BrowserRouter>
 )
