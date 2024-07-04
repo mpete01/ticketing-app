@@ -29,7 +29,21 @@ function Login(){
         }
     }
     
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/'); // Replace with your actual Express endpoint URL (could be "/" or "/api/data")
+                const fetchedData = await response.json(); // Parse the JSON response
+                setData(fetchedData);
+                console.log(data)
+            } catch (error) {
+                console.error(error);
+                // Handle errors appropriately (e.g., display an error message to the user)
+            }
+        };
 
+        fetchData();
+    }, []);
 
     return <div>
         <div className="login-form">
