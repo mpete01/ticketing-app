@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import './styles/home.css';
+import axios from "axios";
 
 function Homepage() {
     const [newTask, setNewTask] = useState("")
-    const [tasks, setTasks] = useState(["balls", "cum xd", "beer", "women:("])
+    const [tasks, setTasks] = useState(["balls", "cum xd", "beer", "women:(", "bruh"])
 
     function handleInputChange(event) {
         setNewTask(event.target.value)
@@ -13,6 +14,7 @@ function Homepage() {
         if(newTask !== "") {
             setTasks(t => [...tasks, newTask])
             setNewTask("")
+            sendData(data, url)
         } else {
             alert("Empty task. Try again!")
         }
@@ -44,6 +46,17 @@ function Homepage() {
         }
     }
     
+    const sendData = async (data, url) => {
+        data = setNewTask(t => newTask)
+        url = 'loaclhost:3000'
+        try {
+            const response = await axios.post(url, data)
+            console.log(`${data} \t sent successfully`)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return <div>
         <h1>Tasks</h1>
         <div className="add-new-task">
