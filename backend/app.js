@@ -23,6 +23,15 @@ app.post('/api/data', async (req, res) => {
   }
 });
 
+app.get('/api/query', async (req, res) => {
+  try {
+    const rows = await db.query('SELECT * FROM people')
+    console.log(rows.json)
+  } catch (err) {
+    console.log(err)
+  }
+})
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
