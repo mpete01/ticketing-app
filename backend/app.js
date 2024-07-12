@@ -1,20 +1,28 @@
 const express = require('express');
 const db = require('./db');
-//const cors = require('cors')
+var cors = require('cors')
 
 const app = express();
-//app.use(cors)
+const port = 3000;
 
-app.get('/', async (req, res) => {
+app.use(cors());
+app.use(express.json());
+
+app.get("/", (req,res) => {
+  res.send("Server is ready.")
+})
+
+
+app.post('/api/data', async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM people');
-    res.json(result.rows);
+    //const result = await db.query('SELECT * FROM people');
+    console.log(req.body)
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

@@ -28,6 +28,7 @@ function Register(){
         <div className="register-form">
             <div className="register-form-title">Register</div>
             <input type="text" className="register-form-username input" id="register-username" placeholder="Enter a username" /><br />
+            <input type="text" className="register-form-email input" id="register-email" placeholder="Enter an email address" /><br />
             <div className="password-input-field">
                 <input type={inputType} value={inputValue} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={changeVisibility} />
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>

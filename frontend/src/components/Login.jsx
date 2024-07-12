@@ -8,7 +8,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 function Login(){
     const [inputType, setInputType] = useState("password")
     const [inputValue, setInputValue] = useState("")
-    const [data, setData] = useState({})
 
     const changeVisibility = (event) => {
         setInputValue(event.target.value)
@@ -28,24 +27,8 @@ function Login(){
             alert("Enter a Username and a Password")
         }
     }
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/'); // Replace with your actual Express endpoint URL (could be "/" or "/api/data")
-                const fetchedData = await response.json(); // Parse the JSON response
-                setData(fetchedData);
-                console.log(data)
-            } catch (error) {
-                console.error(error);
-                // Handle errors appropriately (e.g., display an error message to the user)
-            }
-        };
 
-        fetchData();
-    }, []);
-
-    return <div>
+    return <>
         <div className="login-form">
             <div className="login-form-title">Login</div>
             <input type="text" className="login-form-username input" id="username-login" placeholder="Enter your username" /><br />
@@ -56,7 +39,7 @@ function Login(){
             <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
             <p>Don't have an account? <Link to="/Register">Register</Link></p>
         </div>    
-    </div>
+    </>
 }
 
 export default Login
