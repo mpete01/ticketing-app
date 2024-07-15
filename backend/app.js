@@ -1,5 +1,7 @@
 const express = require('express');
-const db = require('./db');
+const pgp = require('pg-promise')(/* options */)
+const db = pgp('postgres://postgres:123456@localhost:5432/db')
+//const db = require('./db');
 var cors = require('cors')
 
 const app = express();
@@ -23,12 +25,14 @@ app.post('/api/data', async (req, res) => {
   }
 });
 
-app.get('/api/query', async (req, res) => {
+app.get('/api/query', async  (req, res) => {
   try {
-    const rows = await db.query('SELECT * FROM people')
-    console.log(rows.json)
+    const rows = await db.query('SELECT name, email, password FROM people')
+    console.log("Query is successful")
+    res.json(rows)
   } catch (err) {
     console.log(err)
+    res.status(500).send("Internal Server Error")
   }
 })
 
