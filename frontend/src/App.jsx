@@ -41,7 +41,7 @@ function App() {
       <div>
           {query.map((q, index) => (
             <div key={index}>
-              <p>{q.name}{q.email}{q.password}</p> 
+              <p>{q.name}</p> 
             </div>
           ))}
         </div>

@@ -28,28 +28,40 @@ function Register(){
         }
     }
 
-    const axiostry = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         try{
             const sentdata = await axios.post('http://localhost:3000/api/data', { name, email, password })
             console.log(sentdata.data)
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    const axiosTry = async (e) => {
+        e.preventDefault()
+        try{
+            const sentData = await axios.post('http://localhost:3000/users/register', { name, email, password })
+            console.log(sentData.body)
         } catch(err){
             console.log(err)
         }
     }
 
     return <>
-        <div className="register-form">
-            <div className="register-form-title">Register</div>
-            <input type="text" className="register-form-username input" value={name} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
-            <input type="text" className="register-form-email input" value={email} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
-            <div className="password-input-field">
-                <input type={inputType} value={password} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
-                <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
-            </div><br />
-            <button type="submit" className="register-form-submitButton" onClick={submitRegistration}>Register</button>
-            <button type="submit" onClick={axiostry}>axiostry</button>
-            <p>Already have an acoount?<Link className="register-form-link" to="/Login"> Log in</Link></p>
+        <div className="register-container">
+            <form className="register-form">
+                <div className="register-form-title">Register</div>
+                <input type="text" className="register-form-username input" value={name} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
+                <input type="text" className="register-form-email input" value={email} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
+                <div className="password-input-field">
+                    <input type={inputType}  value={password} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
+                    <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
+                </div><br />
+                <button type="submit" className="register-form-submitButton" onClick={handleSubmit}>Register</button>
+                <button onClick={axiosTry}>Send data</button>
+                <p>Already have an acoount?<Link className="register-form-link" to="/Login"> Log in</Link></p>
+            </form>
         </div>    
     </>
 }

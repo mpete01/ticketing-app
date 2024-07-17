@@ -4,7 +4,7 @@ import axios from "axios";
 
 function Homepage() {
     const [newTask, setNewTask] = useState("")
-    const [tasks, setTasks] = useState(["balls", "cum xd", "beer", "women:(", "bruh"])
+    const [tasks, setTasks] = useState([])
 
     function handleInputChange(event) {
         setNewTask(event.target.value)

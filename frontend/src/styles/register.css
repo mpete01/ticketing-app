@@ -2,11 +2,13 @@
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-.register-form {
+.register-container {
     border: 1px solid black;
     border-radius: 20px 20px 20px 20px;
     height: 30vh;
     width: 20vw;
+    min-height: 15vh;
+    min-width: 10vw;
 }
 
 .register-form-title {
