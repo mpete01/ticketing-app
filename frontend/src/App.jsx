@@ -9,6 +9,12 @@ function App() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [query, setQuery] = useState([])
+  const [showPassword, setShowPassword] = useState(false)
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +40,15 @@ function App() {
 
   return (
     <>
+       <div className="password-toggle">
+        <input
+          type={showPassword ? "text" : "password"}
+        />
+        <button type="button" onClick={togglePasswordVisibility}>balls
+          {showPassword ? <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>}
+        </button>
+      </div>
+      <p>-------------------------------------------</p>
       <input type="text" value={name} onChange={(e) => setName(e.target.value)}/> <br />
       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}/> <br />
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}/> <br />

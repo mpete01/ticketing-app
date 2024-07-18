@@ -6,46 +6,30 @@ import Login from './Login'
 import axios from "axios";
 
 function Register(){
-    const [inputType, setInputType] = useState("password")
-    const [inputValue, setInputValue] = useState("")
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
 
-    const changeVisibility = (event) => {
-        setInputValue(event.target.value)
-    }
-    const toggleInputType = () => {
-        setInputType(inputType === "password" ? "text" : "password")
-    }
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+    };
     
-    const submitRegistration = () => {
-        if(inputValue === "" || document.getElementById("register-username").value === ""){
-            alert("Enter a username and a password")
-        } else {
-            console.log(document.getElementById("register-username").value)
-            console.log(inputValue)
-        }
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        try{
-            const sentdata = await axios.post('http://localhost:3000/api/data', { name, email, password })
-            console.log(sentdata.data)
-        } catch(err) {
-            console.log(err)
+        if(!name || !email || !password) {
+            window.alert("Please fill out all the fields")
         }
-    }
-
-    const axiosTry = async (e) => {
-        e.preventDefault()
+        if(password.length < 8){ ///\d/.test(password) - checks if a string contains an integer
+            window.alert("Password should have at least 8 characters")
+        } else {
+            console.log("Password is good enough (unlike you lmao)")
         try{
-            const sentData = await axios.post('http://localhost:3000/users/register', { name, email, password })
-            console.log(sentData.body)
+            const sentData = await axios.post('http://localhost:3000/users/register_post', { name, email, password })
         } catch(err){
             console.log(err)
-        }
+        }}
     }
 
     return <>
@@ -55,11 +39,12 @@ function Register(){
                 <input type="text" className="register-form-username input" value={name} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
                 <input type="text" className="register-form-email input" value={email} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
                 <div className="password-input-field">
-                    <input type={inputType}  value={password} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
-                    <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
+                    <input type={showPassword ? "text" : "password"} value={password} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
+                    <button type="button" className="show-password" id="show-password" onClick={togglePasswordVisibility}>
+                        {showPassword ? <i >&#128065;</i> : <i >&#128065;</i>}
+                    </button>
                 </div><br />
                 <button type="submit" className="register-form-submitButton" onClick={handleSubmit}>Register</button>
-                <button onClick={axiosTry}>Send data</button>
                 <p>Already have an acoount?<Link className="register-form-link" to="/Login"> Log in</Link></p>
             </form>
         </div>    
@@ -67,3 +52,6 @@ function Register(){
 }
 
 export default Register
+
+//&#128065;
+//className="show-password" id="show-password" 
