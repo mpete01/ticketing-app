@@ -26,7 +26,7 @@ function Register(){
         } else {
             console.log("Password is good enough (unlike you lmao)")
         try{
-            const sentData = await axios.post('http://localhost:3000/users/register_post', { name, email, password })
+            let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password })
         } catch(err){
             console.log(err)
         }}

@@ -9,7 +9,11 @@ const flash = require('express-flash')
 const app = express();
 const port = 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 app.use(express.json());
 
 app.use(session({
@@ -37,7 +41,7 @@ app.post('/api/data', async (req, res) => {
 
 app.get('/api/query', async  (req, res) => {
   try {
-    const rows = await db.query('SELECT * FROM users')
+    const rows = await db.query(`SELECT * FROM users WHERE email = $1`, ['kacsa.nyomozo@email.com'])
     console.log("Successful query")
     res.json(rows)
   } catch (err) {
@@ -58,16 +62,26 @@ app.get('/users/dashboard', (req, res) => {
   console.log('Dashboard path')
 })
 
-app.post('/users/register_post', async (req, res) => {
+app.post('/users/register', async (req, res) => {
   const { name, email, password } = req.body
-
-  //console.log({ name, email, password })
+  //console.log(`name: ${ name }\t email: ${ email }\t password: ${ password }\n`)
   let hashedPassword = await bcrypt.hash(password, 10)
-  //console.log("Hashed password: " + hashedPassword)
-  db.query(
-    `SELECT * FROM users
-    WHERE email = $1`,
-    [email])
+
+  let query = await db.query(
+    `SELECT name, email, password FROM users WHERE email = '${email}'`,
+    (err) => {
+      if(err){
+        throw err
+      }
+    })
+  if(query.length > 0) {
+    console.log("User already registered")
+  } else {
+    storedUser = await db.query(
+      `INSERT INTO users (name, email, password)
+      VALUES ('${name}', '${email}', '${hashedPassword}')`
+    )
+  }
 })
 
 app.listen(port, () => {
