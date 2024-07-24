@@ -4,36 +4,42 @@ import Register from './Register'
 import Homepage from "../Home";
 import { Link } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import axios from "axios";
 
 function Login(){
     const [inputType, setInputType] = useState("password")
-    const [inputValue, setInputValue] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
     const changeVisibility = (event) => {
         setInputValue(event.target.value)
     }
+
     const toggleInputType = () => {
         setInputType(inputType === "password" ? "text" : "password")
     }
-    const submitLogin = () => {
-        /*if(document.getElementById("username-login").value === "" || inputValue === ""){
-            alert("Username or password incorrect")}*/
-        if (document.getElementById("username-login").value !== "" && inputValue !== ""){
-            localStorage.setItem("username", `${document.getElementById("username-login").value}`)
-            localStorage.setItem("password", inputValue)
-            console.log(document.getElementById("username-login").value)
-            console.log(inputValue)
-        } else if(inputValue === "" || document.getElementById("username-login").value === ""){
-            alert("Enter a Username and a Password")
+
+    const submitLogin = async (e) => {
+        e.preventDefault()
+        console.log(email, password)
+        if(!email || !password) {
+            window.alert("Please fill out all the fields")
         }
-    }
+        try{
+            let sentData = await axios.post('http://localhost:3000/users/login', { email, password })
+            //console.log(sentData)
+        } catch(err){
+            console.log(err)
+    }}
+
+
 
     return <>
         <div className="login-form">
             <div className="login-form-title">Login</div>
-            <input type="text" className="login-form-username input" id="username-login" placeholder="Enter your username" /><br />
+            <input type="text" className="login-from-email input" id="email-login" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)}/><br />
             <div className="password-input-field">
-                <input type={inputType} value={inputValue} className="login-form-password input" id="login-password" placeholder="Enter your password" onChange={changeVisibility} />
+                <input type={inputType} value={password} className="login-form-password input" id="login-password" placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)} />
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
             </div><br />
             <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
@@ -41,5 +47,4 @@ function Login(){
         </div>    
     </>
 }
-
 export default Login

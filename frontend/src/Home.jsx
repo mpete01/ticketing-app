@@ -4,7 +4,7 @@ import axios from "axios";
 
 function Homepage() {
     const [newTask, setNewTask] = useState("")
-    const [tasks, setTasks] = useState([])
+    const [tasks, setTasks] = useState(["task1", "task2"])
 
     function handleInputChange(event) {
         setNewTask(event.target.value)
