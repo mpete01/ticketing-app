@@ -48,9 +48,11 @@ app.get("/", (req,res) => {
 
 
 app.post('/api/data', async (req, res) => {
+  const { name, email, password } = req.body
   try {
-    //const result = await db.query('SELECT * FROM people');
-    console.log(req.body)
+    const result = await db.query(`SELECT * FROM users WHERE email = '${email}'`);
+    console.log(result)
+    res.send(result)
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error. Maybe The Server Is Not Running');
@@ -94,6 +96,7 @@ app.post('/users/register', async (req, res) => {
     })
   if(query.length > 0) {
     console.log("User already registered")
+    res.send("User already registered")
   } else {
     storedUser = await db.query(
       `INSERT INTO users (name, email, password)
@@ -121,6 +124,9 @@ app.post('/users/login', async (req, res, passport) => {
     
     if(query.length < 1){
       console.log("No user found")
+      res.json({
+        result: "No user found"
+      })
     } else {
       bcrypt.compare(password, query[0].password, (err, isMatch) => {
         if(err){
