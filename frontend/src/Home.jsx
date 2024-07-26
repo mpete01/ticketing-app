@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './styles/home.css';
 import axios from "axios";
+import { redirect } from "react-router-dom";
 
 function Homepage() {
     const [newTask, setNewTask] = useState("")
     const [tasks, setTasks] = useState(["task1", "task2"])
+    const [time, setTime] = useState(new Date())
 
-    function handleInputChange(event) {
-        setNewTask(event.target.value)
-    }
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTime(new Date())
+        }, 1000)
 
-    function addTask(){
+        return () => clearInterval(intervalId);
+    },[])
+    const formattedTime = time.toLocaleTimeString()
+
+    const addTask = () => {
         if(newTask !== "") {
             setTasks(t => [...tasks, newTask])
             setNewTask("")
@@ -20,13 +27,12 @@ function Homepage() {
         }
     }
 
-    function deleteTask(index){
+    const deleteTask = (index) =>{
         const updatedTasks = tasks.filter((_, i) => i !== index)
-
         setTasks(updatedTasks)
     }
 
-    function moveTaskUp(index){
+    const moveTaskUp = (index) => {
         const updatedTasks = [...tasks]
         if(index > 0){
             [updatedTasks[index], updatedTasks[index - 1]] = [updatedTasks[index - 1], updatedTasks[index]]
@@ -36,7 +42,7 @@ function Homepage() {
         }
     }
 
-    function moveTaskDown(index){
+    const moveTaskDown = (index) => {
         const updatedTasks = [...tasks]
         if(index < tasks.length - 1){
             [updatedTasks[index], updatedTasks[index + 1]] = [updatedTasks[index + 1], updatedTasks[index]]
@@ -57,10 +63,19 @@ function Homepage() {
         }
     }
 
-    return <div>
+    const logOut = () => {
+        sessionStorage.removeItem("token")
+        redirect("/login")
+    }
+
+    return(<>
+        <header className="header">
+            <div>{formattedTime}</div>
+            <button className="header-logout" onClick={logOut}>Log out</button>
+        </header>
         <h1>Tasks</h1>
         <div className="add-new-task">
-            <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={handleInputChange}/>
+            <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
             <button className="add-new-task-btn" onClick={addTask}>Add Task</button>
         </div>
         <ol className="tasks">
@@ -72,8 +87,10 @@ function Homepage() {
                     <button className="move-task task-button" onClick={() => moveTaskDown(index)}>Down</button>
                 </li>
             )}
-        </ol>
-    </div>
+        </ol>    
+    </>)
+    
+
 }
 
 export default Homepage

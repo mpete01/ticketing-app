@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import '../styles/login.css';
-import Register from './Register'
-import Homepage from "../Home";
-import { Link } from "react-router-dom";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 
 function Login(){
     const [inputType, setInputType] = useState("password")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-
-    const changeVisibility = (event) => {
-        setInputValue(event.target.value)
-    }
+    const navigate = useNavigate()
 
     const toggleInputType = () => {
         setInputType(inputType === "password" ? "text" : "password")
@@ -21,31 +16,24 @@ function Login(){
 
     const submitLogin = async (e) => {
         e.preventDefault()
-        //console.log(email, password)
         if(!email || !password) {
             window.alert("Please fill out all the fields")
         }
         try{
             let sentData = await axios.post('http://localhost:3000/users/login', { email, password })
-            //console.log(typeof(sentData.data.token))
+            //user doesn't exist or credentials are incorrect (no jwt is awarded)
             if(sentData.data.token === undefined){
                 console.log("No user found")
-                localStorage.setItem("token", sentData.data.token)
-                localStorage.setItem("test", "balls")
-            } else {
-                console.log("Captain Asshair")
-                localStorage.setItem("token", sentData.data.token)
-                
+            } 
+            //user exists and got jwt from server    
+            else {
+                console.log("User found")
+                sessionStorage.setItem("token", sentData.data.token)
+                navigate('/')
             }
         } catch(err){
             console.log(err)
     }}
-
-    const delLocalStor = () => {
-        let tokenLocalStor = localStorage.getItem("token")
-        //localStorage.clear()
-        localStorage.removeItem("test")
-    }
 
     return <>
         <div className="login-form">
@@ -56,7 +44,6 @@ function Login(){
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
             </div><br />
             <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
-            <button onClick={delLocalStor}>Deleete local storage</button>
             <p>Don't have an account? <Link to="/Register">Register</Link></p>
         </div>    
     </>

@@ -13,13 +13,14 @@ import ProtectedRoutes from './components/ProtectedRoutes.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
+      <Routes>        
+        <Route path="/Register" element={<Register />} />
+        <Route path='/Login' element={<Login />}/>
+
         <Route element={<ProtectedRoutes />}>
           <Route path='/' element={<Homepage />} />
           <Route path='/App' element={<App />} />
         </Route>
-        <Route path="/Register" element={<Register />} />
-        <Route path='/Login' element={<Login />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
+import './styles/App.css'
 import axios from 'axios'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 function App() {
   const [name, setName] = useState('')
@@ -10,6 +11,7 @@ function App() {
   const [password, setPassword] = useState('')
   const [query, setQuery] = useState([])
   const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -26,17 +28,10 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/query');
-        setQuery(response.data);
-      } catch (error) {
-        console.log(error);
-      } 
-    };
-    fetchData();
-  }, []);
+
+  const redirectTo = () => {
+    navigate('/')
+  }
 
   return (
     <>
@@ -49,17 +44,7 @@ function App() {
         </button>
       </div>
       <p>-------------------------------------------</p>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)}/> <br />
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}/> <br />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}/> <br />
-      <button type='submit' onClick={handleSubmit}>Submit</button> <br />
-      <div>
-          {query.map((q, index) => (
-            <div key={index}>
-              <p>{q.name}</p> 
-            </div>
-          ))}
-        </div>
+      <button onClick={redirectTo}>Redirect</button>
     </>
   )
 }

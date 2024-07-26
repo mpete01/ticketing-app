@@ -1,26 +1,17 @@
-//import React, { useEffect, useState } from "react";
+import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
 
-const ProtectedRoutes = () => {
-    //const [token, setToken] = useState(false)
+function ProtectedRoutes(){
 
-    let auth = {"token": true}
-    //let storedToken;
+    //store the user's token in session storage
+    const storedToken = sessionStorage.getItem("token")
 
-    /*useEffect(() => {
-        storedToken = localStorage.getItem("token")
-        if(storedToken){
-            setToken(true)
-        } else {
-            setToken(false)
-        }
-    },[])*/
-    return  (
-    <>
-        {auth.token} ? <Outlet /> : <Navigate to="/login" />
-    </>
+    return (
+        //check if there are any valid tokens for the user
+        //if there is the user can access the protected routes
+        //if there is no token the user is redirected to the login page
+        storedToken ? <Outlet /> : <Navigate to="/login" />
     )
-
 }
 
 export default ProtectedRoutes
