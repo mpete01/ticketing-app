@@ -3,7 +3,7 @@ import { Outlet, Navigate } from "react-router-dom";
 
 function ProtectedRoutes(){
 
-    //store the user's token in session storage
+    //get the user's stored token from local storage
     const storedToken = sessionStorage.getItem("token")
 
     return (

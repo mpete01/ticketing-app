@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import './styles/home.css';
 import axios from "axios";
-import { redirect } from "react-router-dom";
 
 function Homepage() {
     const [newTask, setNewTask] = useState("")
-    const [tasks, setTasks] = useState(["task1", "task2"])
+    const [tasks, setTasks] = useState([])
     const [time, setTime] = useState(new Date())
 
+    //get current time eupon reloading and displaying it
     useEffect(() => {
         const intervalId = setInterval(() => {
             setTime(new Date())
@@ -17,11 +17,34 @@ function Homepage() {
     },[])
     const formattedTime = time.toLocaleTimeString()
 
+    //get all the currently stored tasks and store them in the tasks variable
+    useEffect(() => {
+        const storedTasks = async () => {
+            try{
+                let tasksFromDb = await axios.get('http://localhost:3000/tasks/getTasks')
+                setTasks(tasksFromDb.data)
+                //console.log(...tasks)
+                //console.log(typeof(tasks))
+            } catch(err){
+                console.log(err)
+            }
+        }
+        storedTasks()
+    },[])
+
+    const gettasks = () => {
+        for(let i = 0; i < tasks.length; i++){
+            setTasks(tasks[i].title)
+        }
+        console.log(tasks)
+    }
+
+    const loggedInUser = localStorage.getItem("user")
+
     const addTask = () => {
         if(newTask !== "") {
             setTasks(t => [...tasks, newTask])
             setNewTask("")
-            sendData(data, url)
         } else {
             alert("Empty task. Try again!")
         }
@@ -52,41 +75,30 @@ function Homepage() {
         }
     }
     
-    const sendData = async (data, url) => {
-        data = setNewTask(t => newTask)
-        url = 'loaclhost:3000'
-        try {
-            const response = await axios.post(url, data)
-            console.log(`${data} \t sent successfully`)
-        } catch (error) {
-            console.error(error)
-        }
+    const sendData = async (req, res) => {
+        let uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTask, loggedInUser, time })
+        console.log(uploadNewTask)
     }
 
     const logOut = () => {
         sessionStorage.removeItem("token")
-        redirect("/login")
+        localStorage.removeItem("user")
+        location.reload()
     }
 
     return(<>
         <header className="header">
+            <div>Logged in as {loggedInUser}</div>
             <div>{formattedTime}</div>
             <button className="header-logout" onClick={logOut}>Log out</button>
         </header>
         <h1>Tasks</h1>
         <div className="add-new-task">
             <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
-            <button className="add-new-task-btn" onClick={addTask}>Add Task</button>
+            <button className="add-new-task-btn" onClick={sendData}>Add Task</button>
         </div>
         <ol className="tasks">
-            {tasks.map((task, index) =>
-                <li key={index} className="task">
-                    <span className="text">{task}</span>
-                    <button className="delete-task task-button" onClick={() => deleteTask(index)}>Delete</button>
-                    <button className="move-task task-button" onClick={() => moveTaskUp(index)}>Up</button>
-                    <button className="move-task task-button" onClick={() => moveTaskDown(index)}>Down</button>
-                </li>
-            )}
+            <button onClick={gettasks}>organize object</button>
         </ol>    
     </>)
     

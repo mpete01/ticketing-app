@@ -17,22 +17,23 @@ function Login(){
     const submitLogin = async (e) => {
         e.preventDefault()
         if(!email || !password) {
-            window.alert("Please fill out all the fields")
+            alert("Please fill out all the fields")
         }
         try{
             let sentData = await axios.post('http://localhost:3000/users/login', { email, password })
             //user doesn't exist or credentials are incorrect (no jwt is awarded)
             if(sentData.data.token === undefined){
-                console.log("No user found")
-            } 
-            //user exists and got jwt from server    
+                alert("No user found. Password or email is incorrect")
+            }
+            //user exists and got jwt from server then user is redirected to home page ("/")
             else {
                 console.log("User found")
+                localStorage.setItem("user", email)
                 sessionStorage.setItem("token", sentData.data.token)
                 navigate('/')
             }
         } catch(err){
-            console.log(err)
+            alert(err)
     }}
 
     return <>

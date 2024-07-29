@@ -10,6 +10,9 @@ function Register(){
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+    const [popup, setPopup] = useState(false)
+    const [failedPopup, setFailedPopup] = useState(false)
+    const [alreadyRegistered, setAlreadyRegisterd] = useState(false)
 
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
@@ -18,18 +21,51 @@ function Register(){
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        //checks if any of the fields are empty, if yes alerts the user that they need to be filled
         if(!name || !email || !password) {
-            window.alert("Please fill out all the fields")
+            setFailedPopup(!failedPopup)
         }
-        if(password.length < 8){ ///\d/.test(password) - checks if a string contains an integer
-            window.alert("Password should have at least 8 characters")
-        } else {
-            console.log("Password is good enough (unlike you lmao)")
-        try{
-            let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password })
-        } catch(err){
-            console.log(err)
-        }}
+        //checks if the pssword is at least 8 characters and contains numbers
+        if(password.length >= 8 && /\d/.test(password)){
+            //console.log(email, password)
+            //sending the user's data to the server to register it in the database
+            try{
+
+                let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password })
+                if(sentData.data === "User already registered"){
+                    setAlreadyRegisterd(!alreadyRegistered)
+                } else {
+                    setPopup(!popup)
+                }
+            } catch(err){
+                console.log(err)
+            }
+        }
+        //ask the user to enter valid email and password
+        else {
+            setFailedPopup(!failedPopup)
+            setEmail("")
+            setPassword("")
+            setName("")
+        }
+    }
+
+    const togglePopup = () => {
+        setPopup(!popup)
+    }
+
+    const toggleFailedPopup = () => {
+        setFailedPopup(!failedPopup)
+    }
+
+    const toggleAlreadyRegistered = () => {
+        setAlreadyRegisterd(!alreadyRegistered)
+    }
+
+    if(popup || failedPopup) {
+        document.body.classList.add('active-modal')
+    } else {
+        document.body.classList.remove('active-modal')
     }
 
     return <>
@@ -47,6 +83,35 @@ function Register(){
                 <button type="submit" className="register-form-submitButton" onClick={handleSubmit}>Register</button>
                 <p>Already have an acoount?<Link className="register-form-link" to="/Login"> Log in</Link></p>
             </form>
+            {popup && (
+                <div className="modal">
+                    <div onClick={togglePopup} className="overlay"></div>
+                    <div className="modal-content">
+                        <h2>Your account has been registered</h2>
+                        <p>Please <Link to='/login'>log in</Link> to your account</p>
+                        <button className="close-modal" onClick={togglePopup}>Close</button>
+                    </div>
+                </div>
+            )}
+            {failedPopup && (
+                <div className="modal">
+                    <div onClick={toggleFailedPopup} className="overlay"></div>
+                    <div className="modal-content">
+                        <h2>Invalid email or password</h2>
+                        <p>Email address must be a valid address<br />Password should be at lest 8 characters and contain numbers</p>
+                        <button className="close-modal" onClick={toggleFailedPopup}>Close</button>
+                    </div>
+                </div>
+            )}
+            {alreadyRegistered && (
+                <div className="modal">
+                    <div onClick={toggleAlreadyRegistered} className="overlay"></div>
+                    <div className="modal-content">
+                        <h2>User already registered</h2>
+                        <button className="close-modal" onClick={toggleAlreadyRegistered}>Close</button>
+                    </div>
+                </div>
+            )}
         </div>    
     </>
 }

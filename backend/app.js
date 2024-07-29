@@ -11,6 +11,9 @@ const jwt = require('jsonwebtoken')
 const app = express();
 const port = process.env.SERVER_PORT;
 
+//MIDDLEWARE
+
+//CORS
 app.use(cors({
   origin: '*',
   credentials: true
@@ -25,6 +28,7 @@ app.use(session({
 
 app.use(flash())
 
+//JWT verification
 const verifyJWT = (req, res, next) => {
   const token = req.headers["x-access-token"]
   if(!token){
@@ -42,49 +46,18 @@ const verifyJWT = (req, res, next) => {
 }
 
 
+
+//API ENDPOINTS
 app.get("/", (req,res) => {
   res.send("Server is ready.")
 })
 
 
-app.post('/api/data', async (req, res) => {
-  const { name, email, password } = req.body
-  try {
-    const result = await db.query(`SELECT * FROM users WHERE email = '${email}'`);
-    console.log(result)
-    res.send(result)
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error. Maybe The Server Is Not Running');
-  }
-});
-
-app.get('/api/query', async  (req, res) => {
-  try {
-    const rows = await db.query(`SELECT * FROM users`)
-    console.log("Successful query")
-    res.json(rows)
-  } catch (err) {
-    console.log(err)
-    res.status(500).send("Internal Server Error. Maybe The Server Is Not Running")
-  }
-})
-
-app.get('/users/register', (req, res) => {
-  console.log('Register path')
-})
-
-app.get('/users/login', (req, res) => {
-  console.log('Login path')
-})
-
-app.get('/users/dashboard', (req, res) => {
-  console.log('Dashboard path')
-})
-
+//USER REGISTRATION
 app.post('/users/register', async (req, res) => {
   const { name, email, password } = req.body
-  //console.log(`name: ${ name }\t email: ${ email }\t password: ${ password }\n`)
+
+  //hash password with bcrypt 
   let hashedPassword = await bcrypt.hash(password, 10)
 
   let query = await db.query(
@@ -93,64 +66,111 @@ app.post('/users/register', async (req, res) => {
       if(err){
         throw err
       }
-    })
+    }
+  )
+  //check if user is already registered, if yes send back a message to client
   if(query.length > 0) {
     console.log("User already registered")
     res.send("User already registered")
-  } else {
+  }
+  //if user is not registered update database with the user's credentials and hashed password 
+  else {
     storedUser = await db.query(
       `INSERT INTO users (name, email, password)
       VALUES ('${name}', '${email}', '${hashedPassword}')`
     )
+    res.send("New user successfully registered")
   }
 })
 
-app.get('/isUserAuthenticated', verifyJWT, (req, res) => {
-  res.send("Faszkivan geci")
-})
 
-app.post('/users/login', async (req, res, passport) => {
+//USER LOGIN
+app.post('/users/login', async (req, res) => {
   const { email, password } = req.body
-  //let authUser = async () => {
-    let query = await db.query(
-      `SELECT id, name, email, password FROM users WHERE email = '${email}'`,
-      (err) => {
-        if(err){
-          throw err
-        }
-        console.log(result)
-      }
-    )
-    
-    if(query.length < 1){
-      console.log("No user found")
-      res.json({
-        result: "No user found"
-      })
-    } else {
-      bcrypt.compare(password, query[0].password, (err, isMatch) => {
-        if(err){
-          throw err
-        }
-        //handle logic if email and password is correct
-        if(isMatch){
-          const id = query[0].id
-          const token = jwt.sign({id}, process.env.JWT_KEY, {
-            expiresIn: 3600,
-          })
-          console.log("Successful authenitcatin, email and password are correct")
-          res.json({
-            auth: false,
-            token: token,
-            result: query[0]
-          })
 
-        } else {
-          console.log("Password is incorrect")
-        }
+  //Querying the user based on the provided email
+  let query = await db.query(
+    `SELECT id, name, email, password FROM users WHERE email = '${email}'`,
+    (err) => {
+      if(err){
+        throw err
+      }
+    }
+  )
+  
+  //If there are no user do nothing and just return "No user found"
+  if(query.length < 1){
+    console.log("No user found")
+    res.json({
+      result: "No user found"
     })
-    //}
+  } 
+  //If user is found compare credentials from database
+  else {
+    //Password comparison with bcrypt
+    bcrypt.compare(password, query[0].password, (err, isMatch) => {
+      if(err){
+        throw err
+      }
+      //If passwords match, get the users id and assign a JWT based on the user's id in the database
+      if(isMatch){
+        const id = query[0].id
+        const token = jwt.sign({id}, process.env.JWT_KEY, {
+          expiresIn: "8h",
+        })
+        console.log("Successful authenitcation, email and password are correct")
+        //sending back the token to client
+        res.json({
+          auth: false,
+          token: token,
+          result: query[0]
+        })
+      }
+      //send back a response if password is incorrect
+      else {
+        console.log("Password is incorrect")
+        res.send("Password is incorrect")
+      }
+    })
   }
+})
+
+
+//UPLOAD NEW TASK TO DATABASE
+app.post('/tasks/uploadNew', async (req, res) => {
+  let { newTask, loggedInUser, time } = req.body
+  
+  //format the date to yy-mm-dd hh:mm:ss
+  time = new Date()
+  time = `${time.getFullYear()}-${time.getMonth()}-${time.getDate()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
+
+  //get the last task's index
+  let lastIndex = await db.query(
+    `SELECT index FROM tasks
+    ORDER BY index DESC
+    LIMIT 1`
+  )
+
+  //add the task to the database
+  let query = await db.query(
+    `INSERT INTO tasks (title, created_at, index, created_by)
+    VALUES ('${newTask}', '${time}', '${lastIndex[0].index + 1}', '${loggedInUser}')`,
+    (err) => {
+      if(err){
+        throw err
+      }
+    }
+  )
+})
+
+
+//GET TASKS FROM DATABASE
+app.get('/tasks/getTasks', async (req, res) => {
+  let tasks = await db.query(
+    `SELECT title FROM tasks`
+  )
+  res.send(tasks)
+  console.log(tasks)
 })
 
 app.listen(port, () => {
