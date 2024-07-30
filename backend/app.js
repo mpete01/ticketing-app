@@ -169,8 +169,24 @@ app.get('/tasks/getTasks', async (req, res) => {
   let tasks = await db.query(
     `SELECT title FROM tasks`
   )
-  res.send(tasks)
-  console.log(tasks)
+  //res.send(tasks)
+  let queriedTasks = []
+  for(let i = 0; i < tasks.length; i++){
+    queriedTasks.push(tasks[i].title)
+  }
+  //console.log(queriedTasks)
+  res.send(queriedTasks)
+})
+
+
+//DELETE TASK FROM DATABASE
+app.post('/tasks/delTask', async (req, res) => {
+  const deleteTask = req.body.delete
+  console.log(deleteTask)
+  const query = await db.query(
+    `DELETE FROM tasks
+    WHERE title = '${deleteTask}'`
+  )
 })
 
 app.listen(port, () => {
