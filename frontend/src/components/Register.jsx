@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import '../styles/register.css';
 import { Link } from "react-router-dom";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './Login'
 import axios from "axios";
 
 function Register(){
@@ -22,7 +20,7 @@ function Register(){
     const handleSubmit = async (e) => {
         e.preventDefault()
         //checks if any of the fields are empty, if yes alerts the user that they need to be filled
-        if(!name || !email || !password) {
+        if(!name.trim() || !email.trim() || !password.trim()) {
             setFailedPopup(!failedPopup)
         }
         //checks if the pssword is at least 8 characters and contains numbers
@@ -30,7 +28,6 @@ function Register(){
             //console.log(email, password)
             //sending the user's data to the server to register it in the database
             try{
-
                 let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password })
                 if(sentData.data === "User already registered"){
                     setAlreadyRegisterd(!alreadyRegistered)
@@ -72,10 +69,10 @@ function Register(){
         <div className="register-container">
             <form className="register-form">
                 <div className="register-form-title">Register</div>
-                <input type="text" className="register-form-username input" value={name} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
-                <input type="text" className="register-form-email input" value={email} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
+                <input type="text" className="register-form-username input" value={name.trim()} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
+                <input type="text" className="register-form-email input" value={email.trim()} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
                 <div className="password-input-field">
-                    <input type={showPassword ? "text" : "password"} value={password} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
+                    <input type={showPassword ? "text" : "password"} value={password.trim()} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
                     <button type="button" className="show-password" id="show-password" onClick={togglePasswordVisibility}>
                         {showPassword ? <i >&#128065;</i> : <i >&#128065;</i>}
                     </button>

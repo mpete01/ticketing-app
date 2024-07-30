@@ -7,7 +7,7 @@ function Homepage() {
     const [tasks, setTasks] = useState([])
     const [time, setTime] = useState(new Date())
 
-    //get current time eupon reloading and displaying it
+    //get current time upon reloading and displaying it
     useEffect(() => {
         const intervalId = setInterval(() => {
             setTime(new Date())
@@ -17,42 +17,41 @@ function Homepage() {
     },[])
     const formattedTime = time.toLocaleTimeString()
 
+
     //get all the currently stored tasks and store them in the tasks variable
     useEffect(() => {
-        const storedTasks = async () => {
+        const query = async () => {
             try{
-                let tasksFromDb = await axios.get('http://localhost:3000/tasks/getTasks')
-                setTasks(tasksFromDb.data)
-                //console.log(...tasks)
-                //console.log(typeof(tasks))
+                const response = await axios.get('http://localhost:3000/tasks/getTasks')
+                setTasks(response.data)
             } catch(err){
                 console.log(err)
             }
         }
-        storedTasks()
-    },[])
+        query()
+    }, [])
 
-    const gettasks = () => {
-        for(let i = 0; i < tasks.length; i++){
-            setTasks(tasks[i].title)
-        }
-        console.log(tasks)
-    }
 
+    //get current logged in user
     const loggedInUser = localStorage.getItem("user")
 
-    const addTask = () => {
-        if(newTask !== "") {
-            setTasks(t => [...tasks, newTask])
+    //add new task to UI and to the database too
+    const addTask = async () => {
+        if(newTask.trim() !== "") {
+            setTasks(t => [...t, newTask])
             setNewTask("")
+            const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTask, loggedInUser, time })
         } else {
             alert("Empty task. Try again!")
         }
     }
 
-    const deleteTask = (index) =>{
+    //delete task from UI and database
+    const deleteTask = async (index) =>{
         const updatedTasks = tasks.filter((_, i) => i !== index)
         setTasks(updatedTasks)
+        const deletedTask = tasks[index]
+        const deleteFromDb = await axios.post('http://localhost:3000/tasks/delTask', { delete: deletedTask })
     }
 
     const moveTaskUp = (index) => {
@@ -74,11 +73,6 @@ function Homepage() {
             alert("kurva anyád")
         }
     }
-    
-    const sendData = async (req, res) => {
-        let uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTask, loggedInUser, time })
-        console.log(uploadNewTask)
-    }
 
     const logOut = () => {
         sessionStorage.removeItem("token")
@@ -95,10 +89,17 @@ function Homepage() {
         <h1>Tasks</h1>
         <div className="add-new-task">
             <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
-            <button className="add-new-task-btn" onClick={sendData}>Add Task</button>
+            <button className="add-new-task-btn" onClick={addTask}>Add Task</button>
         </div>
         <ol className="tasks">
-            <button onClick={gettasks}>organize object</button>
+            {tasks.map((task, index) =>
+                <li key={index} className="task">
+                    <span className="text">{task}</span>
+                    <button className="delete-task task-button" onClick={() => deleteTask(index)}>Delete</button>
+                    <button className="move-task task-button" onClick={() => moveTaskUp(index)}>Up</button>
+                    <button className="move-task task-button" onClick={() => moveTaskDown(index)}>Down</button>
+                </li>
+            )}
         </ol>    
     </>)
     
