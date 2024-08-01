@@ -1,10 +1,30 @@
-body {
-    background: linear-gradient(darkblue, lightblue)
+:root{
+    margin: 0px;
+    padding: 0px;
 }
 
-#header {
-    top: 0;
+body {
+    background: linear-gradient(darkblue, lightblue);
+    height: 100vh;
+}
+
+.header {
+    width: 100%;
     display: flex;
+    justify-content: space-around;
+    align-items: end;
+}
+
+.header-nav {
+    width: 100%;
+    display: flex;
+}
+
+.header-content{
+    border-radius: 20px 20px 20px 20px;
+    flex: 1;
+    text-align: left;
+    margin: 3vw;
 }
 
 .add-new-task {

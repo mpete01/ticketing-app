@@ -29,7 +29,7 @@ function Login(){
             else {
                 console.log("User found")
                 localStorage.setItem("user", email)
-                sessionStorage.setItem("token", sentData.data.token)
+                localStorage.setItem("token", sentData.data.token)
                 navigate('/')
             }
         } catch(err){

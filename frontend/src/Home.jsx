@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import './styles/home.css';
+import './styles/Home.css';
 import axios from "axios";
 
 function Homepage() {
     const [newTask, setNewTask] = useState("")
     const [tasks, setTasks] = useState([])
     const [time, setTime] = useState(new Date())
+    const [timeLeft, setTimeLeft] = useState(60000)
+    const [isTimerRunning, setIsTimerRunning] = useState(true)
+
 
     //get current time upon reloading and displaying it
     useEffect(() => {
@@ -32,6 +35,38 @@ function Homepage() {
     }, [])
 
 
+    //create a countdown for 10 minutes
+    useEffect(() => {
+        //create a timer
+        const timerId = setInterval(() => {
+            if(timeLeft > 0){
+                setTimeLeft((prevTime) => prevTime - 1)
+            }            
+          }, 1000);
+        
+          //resetting timer when something is clicked
+        window.addEventListener('click', handleReset)
+
+        return () => {
+            clearInterval(timerId)
+            window.removeEventListener('click', handleReset)
+        }
+    }, [])
+    const handleReset = () => {
+        setTimeLeft(60000)
+    }
+    const minutes = Math.floor(timeLeft / 60)
+    const seconds = timeLeft % 60
+    
+    //if countdown is 0 JWT and the user is deleted from localstorage and needs to sign in again
+    setTimeout(() => {
+        if(timeLeft < 1){
+            localStorage.removeItem("token")
+            localStorage.removeItem("user")
+            location.reload()
+        }
+    }, timeLeft)
+    
     //get current logged in user
     const loggedInUser = localStorage.getItem("user")
 
@@ -75,16 +110,19 @@ function Homepage() {
     }
 
     const logOut = () => {
-        sessionStorage.removeItem("token")
+        localStorage.removeItem("token")
         localStorage.removeItem("user")
         location.reload()
     }
 
     return(<>
         <header className="header">
-            <div>Logged in as {loggedInUser}</div>
-            <div>{formattedTime}</div>
-            <button className="header-logout" onClick={logOut}>Log out</button>
+            <nav className="header-nav">
+                <div className="header-nav-currentUser header-content">Logged in as: {loggedInUser}</div>
+                <div className="header-nav-currentTime header-content">{formattedTime}</div>
+                <div className="header-nav-counter header-content">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
+                <button className="header-nav-logout header-content" onClick={logOut}>Log out</button>
+            </nav>
         </header>
         <h1>Tasks</h1>
         <div className="add-new-task">

@@ -10,6 +10,7 @@ import ProtectedRoutes from './components/ProtectedRoutes.jsx'
 import NoRoute from './components/Noroute.jsx'
 
 
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

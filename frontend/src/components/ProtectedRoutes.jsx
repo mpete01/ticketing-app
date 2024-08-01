@@ -4,7 +4,7 @@ import { Outlet, Navigate } from "react-router-dom";
 function ProtectedRoutes(){
 
     //get the user's stored token from local storage
-    const storedToken = sessionStorage.getItem("token")
+    const storedToken = localStorage.getItem("token")
 
     return (
         //check if there are any valid tokens for the user
