@@ -6,7 +6,7 @@ function Homepage() {
     const [newTask, setNewTask] = useState("")
     const [tasks, setTasks] = useState([])
     const [time, setTime] = useState(new Date())
-    const [timeLeft, setTimeLeft] = useState(60000)
+    const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
 
 
@@ -53,22 +53,25 @@ function Homepage() {
         }
     }, [])
     const handleReset = () => {
-        setTimeLeft(60000)
+        setTimeLeft(600)
     }
     const minutes = Math.floor(timeLeft / 60)
     const seconds = timeLeft % 60
     
-    //if countdown is 0 JWT and the user is deleted from localstorage and needs to sign in again
+
+    //if countdown is 0 JWT and the user is deleted from sessionStorage and needs to sign in again
     setTimeout(() => {
         if(timeLeft < 1){
-            localStorage.removeItem("token")
-            localStorage.removeItem("user")
+            sessionStorage.removeItem("token")
+            sessionStorage.removeItem("user")
             location.reload()
         }
     }, timeLeft)
     
+
     //get current logged in user
-    const loggedInUser = localStorage.getItem("user")
+    const loggedInUser = sessionStorage.getItem("user")
+
 
     //add new task to UI and to the database too
     const addTask = async () => {
@@ -81,6 +84,7 @@ function Homepage() {
         }
     }
 
+
     //delete task from UI and database
     const deleteTask = async (index) =>{
         const updatedTasks = tasks.filter((_, i) => i !== index)
@@ -89,6 +93,8 @@ function Homepage() {
         const deleteFromDb = await axios.post('http://localhost:3000/tasks/delTask', { delete: deletedTask })
     }
 
+
+    //handle moving tasks up or down
     const moveTaskUp = (index) => {
         const updatedTasks = [...tasks]
         if(index > 0){
@@ -98,7 +104,6 @@ function Homepage() {
             alert("kurva anyád")
         }
     }
-
     const moveTaskDown = (index) => {
         const updatedTasks = [...tasks]
         if(index < tasks.length - 1){
@@ -109,13 +114,16 @@ function Homepage() {
         }
     }
 
+
+    //handle logging out
     const logOut = () => {
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
+        sessionStorage.removeItem("token")
+        sessionStorage.removeItem("user")
         location.reload()
     }
 
-    return(<>
+    return(
+    <>
         <header className="header">
             <nav className="header-nav">
                 <div className="header-nav-currentUser header-content">Logged in as: {loggedInUser}</div>
@@ -124,7 +132,7 @@ function Homepage() {
                 <button className="header-nav-logout header-content" onClick={logOut}>Log out</button>
             </nav>
         </header>
-        <h1>Tasks</h1>
+        <h1 className="text-stone-600">Tasks</h1>
         <div className="add-new-task">
             <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
             <button className="add-new-task-btn" onClick={addTask}>Add Task</button>
@@ -139,9 +147,8 @@ function Homepage() {
                 </li>
             )}
         </ol>    
-    </>)
-    
-
+    </>
+    )
 }
 
 export default Homepage

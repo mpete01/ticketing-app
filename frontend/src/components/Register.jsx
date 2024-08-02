@@ -85,7 +85,7 @@ function Register(){
                     <div onClick={togglePopup} className="overlay"></div>
                     <div className="modal-content">
                         <h2>Your account has been registered</h2>
-                        <p>Please <Link to='/login'>log in</Link> to your account</p>
+                        <p>Please <Link to='/login'>Log in</Link> to your account</p>
                         <button className="close-modal" onClick={togglePopup}>Close</button>
                     </div>
                 </div>

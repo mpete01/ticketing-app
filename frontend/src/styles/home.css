@@ -1,30 +1,38 @@
 :root{
     margin: 0px;
     padding: 0px;
+    width: 100%;
 }
 
 body {
+    margin: 0px;
+    padding: 0px;
     background: linear-gradient(darkblue, lightblue);
     height: 100vh;
+    color: white;
 }
 
 .header {
     width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: end;
+    margin: 2rem 50px 2rem 2rem;
+    display: inline-block;
 }
 
 .header-nav {
     width: 100%;
+    margin-top: 0px;
     display: flex;
 }
 
 .header-content{
+    border: 3px solid white;
     border-radius: 20px 20px 20px 20px;
-    flex: 1;
-    text-align: left;
-    margin: 3vw;
+    padding: 0.5rem;
+    
+}
+
+.title {
+    margin-top: 2rem;
 }
 
 .add-new-task {
@@ -39,6 +47,8 @@ body {
     border: 1px solid black;
     border-radius: 1vw 1vw 1vw 1vw;
     padding: 1vh;
+    background-color: aliceblue;
+    color: black;
 }
 
 .add-new-task-btn {
@@ -56,7 +66,7 @@ ol {
 }
 
 li {
-    font-size: 2rem;
+    font-size: 1rem;
     font-weight: bold;
     padding: 1vw;
     margin-bottom: 1vh;

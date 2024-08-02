@@ -28,8 +28,8 @@ function Login(){
             //user exists and got jwt from server then user is redirected to home page ("/")
             else {
                 console.log("User found")
-                localStorage.setItem("user", email)
-                localStorage.setItem("token", sentData.data.token)
+                sessionStorage.setItem("user", email)
+                sessionStorage.setItem("token", sentData.data.token)
                 navigate('/')
             }
         } catch(err){
@@ -43,9 +43,9 @@ function Login(){
             <div className="password-input-field">
                 <input type={inputType} value={password} className="login-form-password input" id="login-password" placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)} />
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
-            </div><br />
+            </div>
             <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
-            <p>Don't have an account? <Link to="/Register">Register</Link></p>
+            <p className="register">Don't have an account? <Link to="/Register">Register</Link></p>
         </div>    
     </>
 }
