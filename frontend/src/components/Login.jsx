@@ -45,7 +45,7 @@ function Login(){
                 <button className="show-password" id="show-password" onClick={toggleInputType}>&#128065;</button>
             </div>
             <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
-            <p className="register">Don't have an account? <Link to="/Register">Register</Link></p>
+            <p className="register">Don't have an account? <Link to="/Register" style={{ textDecoration: 'underline' }}>Register</Link></p>
         </div>    
     </>
 }

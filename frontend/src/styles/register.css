@@ -2,14 +2,18 @@
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-.register-container {
+.register-form {
     border: 1px solid black;
     border-radius: 20px 20px 20px 20px;
-    height: 30vh;
-    width: 20vw;
-    min-height: 15vh;
-    min-width: 10vw;
+    height: 22rem; /*30vh*/
+    width: 20rem; /*20vw*/
+    margin: auto;
+    margin-top: 25vh;
+    padding: 2rem;
+    min-width: 20rem;
+    min-height: 18rem;
 }
+
 
 .register-form-title {
     margin-top: 2vh;
@@ -21,18 +25,12 @@
 input {
     width: 12vw;
     height: 2vh;
+    border: 1px solid black;
     border-radius: 5px 5px 5px 5px;
-    padding: 0.2vw;
-}
-
-.register-form-email {
-    position: relative;
-    margin-top: 10px;
-}
-
-.password-input-field {
-    position: relative;
-    margin-top: 10px;
+    padding: 1em;
+    background-color: white;
+    color: black;
+    margin: 0.2em;
 }
 
 .show-password {
@@ -44,11 +42,14 @@ input {
     height: fit-content;
     width: fit-content;
     cursor: pointer;
+    margin-left: 1rem;
 }
 
 .register-form-submitButton {
-    width: 12vw;
-    height: 4vh;
+    width: 15rem;
+    height: 2.5rem;
+    min-width: 15rem;
+    min-height: 2.5rem;
     color: white;
     background-color: #646cff;
     cursor: pointer;
@@ -58,13 +59,9 @@ input {
     font-size: 1.5rem;
 }
 
-.register-form-link {
-    color: rgb(244, 247, 254);
-    text-decoration: underline;
-}
-
 .login {
-    text-decoration: underline;
+    color: aliceblue;
+    font-size: 1rem;
 }
 
 /*styles for the popup windows*/

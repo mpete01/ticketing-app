@@ -76,9 +76,9 @@ function Register(){
                     <button type="button" className="show-password" id="show-password" onClick={togglePasswordVisibility}>
                         {showPassword ? <i >&#128065;</i> : <i >&#128065;</i>}
                     </button>
-                </div><br />
+                </div>
                 <button type="submit" className="register-form-submitButton" onClick={handleSubmit}>Register</button>
-                <p>Already have an acoount?<Link className="register-form-link" to="/Login"> Log in</Link></p>
+                <p>Already have an acoount?<Link className="register-form-link" to="/Login" style={{ textDecoration: 'underline' }}> Log in</Link></p>
             </form>
             {popup && (
                 <div className="modal">
@@ -114,6 +114,3 @@ function Register(){
 }
 
 export default Register
-
-//&#128065;
-//className="show-password" id="show-password" 

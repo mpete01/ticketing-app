@@ -132,21 +132,21 @@ function Homepage() {
                 <button className="header-nav-logout header-content" onClick={logOut}>Log out</button>
             </nav>
         </header>
-        <h1 className="text-stone-600">Tasks</h1>
+        <h1>Tasks</h1>
         <div className="add-new-task">
             <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
             <button className="add-new-task-btn" onClick={addTask}>Add Task</button>
         </div>
-        <ol className="tasks">
+        <div className="tickets">
             {tasks.map((task, index) =>
-                <li key={index} className="task">
-                    <span className="text">{task}</span>
+                <li key={index}>
+                    <textarea name="ticket" id="ticket"  className="ticket" value={task}></textarea>                        
                     <button className="delete-task task-button" onClick={() => deleteTask(index)}>Delete</button>
                     <button className="move-task task-button" onClick={() => moveTaskUp(index)}>Up</button>
                     <button className="move-task task-button" onClick={() => moveTaskDown(index)}>Down</button>
                 </li>
-            )}
-        </ol>    
+            )}  
+        </div>
     </>
     )
 }

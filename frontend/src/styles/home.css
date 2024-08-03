@@ -1,15 +1,15 @@
 :root{
     margin: 0px;
     padding: 0px;
-    width: 100%;
 }
 
 body {
     margin: 0px;
     padding: 0px;
     background: linear-gradient(darkblue, lightblue);
-    height: 100vh;
     color: white;
+    height: 100vh;
+    width: 100vw;
 }
 
 .header {
@@ -25,10 +25,10 @@ body {
 }
 
 .header-content{
-    border: 3px solid white;
+    border: 2px solid white;
     border-radius: 20px 20px 20px 20px;
     padding: 0.5rem;
-    
+    margin: auto;
 }
 
 .title {
@@ -61,10 +61,6 @@ body {
     cursor: pointer;
 }
 
-ol {
-    padding: 0px;
-}
-
 li {
     font-size: 1rem;
     font-weight: bold;
@@ -73,6 +69,12 @@ li {
     border-bottom: 1px solid lightgrey;
     display: flex;
     align-items: center;
+}
+
+.ticket {
+    color: black;
+    width: 60%;
+    resize: none;
 }
 
 .text {
