@@ -27,7 +27,7 @@ function Login(){
             }
             //user exists and got jwt from server then user is redirected to home page ("/")
             else {
-                console.log("User found")
+                console.log(sentData.data)
                 sessionStorage.setItem("user", email)
                 sessionStorage.setItem("token", sentData.data.token)
                 navigate('/')

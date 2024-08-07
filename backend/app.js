@@ -53,7 +53,7 @@ app.get("/", (req,res) => {
 })
 
 
-//USER REGISTRATION
+//USER REGISTRATION FOR users TABLE
 app.post('/users/register', async (req, res) => {
   const { name, email, password } = req.body
 
@@ -61,7 +61,7 @@ app.post('/users/register', async (req, res) => {
   let hashedPassword = await bcrypt.hash(password, 10)
 
   let query = await db.query(
-    `SELECT name, email, password FROM users WHERE email = '${email}'`,
+    `SELECT username, email, password FROM users WHERE email = '${email}'`,
     (err) => {
       if(err){
         throw err
@@ -76,7 +76,7 @@ app.post('/users/register', async (req, res) => {
   //if user is not registered update database with the user's credentials and hashed password 
   else {
     storedUser = await db.query(
-      `INSERT INTO users (name, email, password)
+      `INSERT INTO users (username, email, password)
       VALUES ('${name}', '${email}', '${hashedPassword}')`
     )
     res.send("New user successfully registered")
@@ -90,7 +90,7 @@ app.post('/users/login', async (req, res) => {
 
   //Querying the user based on the provided email
   let query = await db.query(
-    `SELECT id, name, email, password FROM users WHERE email = '${email}'`,
+    `SELECT id, username, email, password FROM users WHERE email = '${email}'`,
     (err) => {
       if(err){
         throw err
@@ -138,23 +138,23 @@ app.post('/users/login', async (req, res) => {
 
 //UPLOAD NEW TASK TO DATABASE
 app.post('/tasks/uploadNew', async (req, res) => {
-  let { newTask, loggedInUser, time } = req.body
+  let { newTaskTitle, newTask, loggedInUser, time } = req.body
+
+  let loggedInUserid = await db.query(
+    `SELECT id FROM users
+    WHERE email='${loggedInUser}'`
+  )
+  console.log({ newTaskTitle, newTask, loggedInUser, time })
+  console.log(loggedInUserid[0].id)
   
   //format the date to yy-mm-dd hh:mm:ss
   time = new Date()
   time = `${time.getFullYear()}-${time.getMonth()}-${time.getDate()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
 
-  //get the last task's index
-  let lastIndex = await db.query(
-    `SELECT index FROM tasks
-    ORDER BY index DESC
-    LIMIT 1`
-  )
-
   //add the task to the database
   let query = await db.query(
-    `INSERT INTO tasks (title, created_at, index, created_by)
-    VALUES ('${newTask}', '${time}', '${lastIndex[0].index + 1}', '${loggedInUser}')`,
+    `INSERT INTO tickets (title, description, created_at, updated_at, creator_id)
+    VALUES ('${newTaskTitle}', '${newTask}', '${time}', '${time}', '${loggedInUserid[0].id}' )`,
     (err) => {
       if(err){
         throw err
@@ -164,28 +164,45 @@ app.post('/tasks/uploadNew', async (req, res) => {
 })
 
 
-//GET TASKS FROM DATABASE
-app.get('/tasks/getTasks', async (req, res) => {
-  let tasks = await db.query(
-    `SELECT title FROM tasks`
+//GET TASKS FROM DATABASE OF THE CURRENT LOGGED IN USER
+app.post('/tasks/getTasks', async (req, res) => {
+  const { currentUserEmail } = req.body
+
+  let getCurrentUserId = await db.query(
+    `SELECT id FROM users WHERE email = '${currentUserEmail}'`
   )
-  //res.send(tasks)
-  let queriedTasks = []
-  for(let i = 0; i < tasks.length; i++){
-    queriedTasks.push(tasks[i].title)
+
+  /*let ticketTitles = await db.query(
+    `SELECT title FROM tickets WHERE creator_id = '${getCurrentUserId[0].id}'`
+  )
+  let queriedTicketTitles = []
+  for(let i = 0; i < ticketTitles.length; i++){
+    queriedTicketTitles.push(ticketTitles[i].title)
+  }*/
+
+  let tickets = await db.query(
+    `SELECT description from tickets WHERE creator_id = '${getCurrentUserId[0].id}'`
+  )  
+  let queriedTickets = []
+  for(let i = 0; i < tickets.length; i++){
+    queriedTickets.push(tickets[i])
   }
-  //console.log(queriedTasks)
-  res.send(queriedTasks)
+  //console.log(queriedTicketTitles)
+  console.log(queriedTickets)
+  res.send(queriedTickets)
 })
 
 
 //DELETE TASK FROM DATABASE
 app.post('/tasks/delTask', async (req, res) => {
-  const deleteTask = req.body.delete
-  console.log(deleteTask)
+  const { deletedTask, loggedInUser } = req.body
+  let getCurrentUserId = await db.query(
+    `SELECT id from users WHERE email = '${loggedInUser}'`
+  )
+
   const query = await db.query(
-    `DELETE FROM tasks
-    WHERE title = '${deleteTask}'`
+    `DELETE FROM tickets
+    WHERE description = '${deletedTask}' AND creator_id = '${getCurrentUserId[0].id}'`
   )
 })
 

@@ -4,6 +4,7 @@ import axios from "axios";
 
 function Homepage() {
     const [newTask, setNewTask] = useState("")
+    const [newTaskTitle, setNewTaskTitle] = useState("")
     const [tasks, setTasks] = useState([])
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
@@ -21,11 +22,14 @@ function Homepage() {
     const formattedTime = time.toLocaleTimeString()
 
 
-    //get all the currently stored tasks and store them in the tasks variable
+    //get all the currently stored tasks by the logged in user and store them in the tasks variable
     useEffect(() => {
+        const currentUserEmail = sessionStorage.getItem("user")
+        console.log(currentUserEmail)
         const query = async () => {
             try{
-                const response = await axios.get('http://localhost:3000/tasks/getTasks')
+                const response = await axios.post('http://localhost:3000/tasks/getTasks', { currentUserEmail })
+                console.log(response.data)
                 setTasks(response.data)
             } catch(err){
                 console.log(err)
@@ -33,7 +37,6 @@ function Homepage() {
         }
         query()
     }, [])
-
 
     //create a countdown for 10 minutes
     useEffect(() => {
@@ -78,7 +81,8 @@ function Homepage() {
         if(newTask.trim() !== "") {
             setTasks(t => [...t, newTask])
             setNewTask("")
-            const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTask, loggedInUser, time })
+            console.log(newTaskTitle)
+            const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTaskTitle, newTask, loggedInUser, time })
         } else {
             alert("Empty task. Try again!")
         }
@@ -87,10 +91,11 @@ function Homepage() {
 
     //delete task from UI and database
     const deleteTask = async (index) =>{
-        const updatedTasks = tasks.filter((_, i) => i !== index)
+        console.log(tasks[index])
+        /*const updatedTasks = tasks.filter((_, i) => i !== index)
         setTasks(updatedTasks)
         const deletedTask = tasks[index]
-        const deleteFromDb = await axios.post('http://localhost:3000/tasks/delTask', { delete: deletedTask })
+       const deleteFromDb = await axios.post('http://localhost:3000/tasks/delTask', { deletedTask, loggedInUser })*/
     }
 
 
@@ -134,6 +139,7 @@ function Homepage() {
         </header>
         <h1>Tasks</h1>
         <div className="add-new-task">
+            <input type="text" className="new-task-title" placeholder="Enter a title..." value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} />
             <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
             <button className="add-new-task-btn" onClick={addTask}>Add Task</button>
         </div>
