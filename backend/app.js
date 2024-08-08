@@ -172,24 +172,26 @@ app.post('/tasks/getTasks', async (req, res) => {
     `SELECT id FROM users WHERE email = '${currentUserEmail}'`
   )
 
-  /*let ticketTitles = await db.query(
+  let ticketTitles = await db.query(
     `SELECT title FROM tickets WHERE creator_id = '${getCurrentUserId[0].id}'`
   )
   let queriedTicketTitles = []
   for(let i = 0; i < ticketTitles.length; i++){
     queriedTicketTitles.push(ticketTitles[i].title)
-  }*/
+  }
 
   let tickets = await db.query(
     `SELECT description from tickets WHERE creator_id = '${getCurrentUserId[0].id}'`
   )  
   let queriedTickets = []
   for(let i = 0; i < tickets.length; i++){
-    queriedTickets.push(tickets[i])
+    queriedTickets.push(tickets[i].description)
   }
-  //console.log(queriedTicketTitles)
-  console.log(queriedTickets)
-  res.send(queriedTickets)
+
+  res.send({
+    "titles": queriedTicketTitles,
+    "tickets": queriedTickets
+  })
 })
 
 

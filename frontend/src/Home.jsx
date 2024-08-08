@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import './styles/Home.css';
 import axios from "axios";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
+
 
 function Homepage() {
-    const [newTask, setNewTask] = useState("")
-    const [newTaskTitle, setNewTaskTitle] = useState("")
+    const [newTicket, setNewTicket] = useState("")
+    const [newTicketTitle, setNewTicketTitle] = useState("")
+    const [ticketTitle, setTicketTitle] = useState([])
     const [tasks, setTasks] = useState([])
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
@@ -30,7 +37,8 @@ function Homepage() {
             try{
                 const response = await axios.post('http://localhost:3000/tasks/getTasks', { currentUserEmail })
                 console.log(response.data)
-                setTasks(response.data)
+                setTicketTitle(response.data.titles)
+                setTasks(response.data.tickets)
             } catch(err){
                 console.log(err)
             }
@@ -78,11 +86,11 @@ function Homepage() {
 
     //add new task to UI and to the database too
     const addTask = async () => {
-        if(newTask.trim() !== "") {
-            setTasks(t => [...t, newTask])
-            setNewTask("")
+        if(newTicket.trim() !== "") {
+            setTasks(t => [...t, newTicket])
+            setNewTicket("")
             console.log(newTaskTitle)
-            const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTaskTitle, newTask, loggedInUser, time })
+            const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTicketTitle, newTicket, loggedInUser, time })
         } else {
             alert("Empty task. Try again!")
         }
@@ -129,30 +137,51 @@ function Homepage() {
 
     return(
     <>
-        <header className="header">
-            <nav className="header-nav">
-                <div className="header-nav-currentUser header-content">Logged in as: {loggedInUser}</div>
-                <div className="header-nav-currentTime header-content">{formattedTime}</div>
-                <div className="header-nav-counter header-content">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
-                <button className="header-nav-logout header-content" onClick={logOut}>Log out</button>
-            </nav>
-        </header>
-        <h1>Tasks</h1>
-        <div className="add-new-task">
-            <input type="text" className="new-task-title" placeholder="Enter a title..." value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} />
-            <input type="text" className="new-task" placeholder="Enter new task..." value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
-            <button className="add-new-task-btn" onClick={addTask}>Add Task</button>
-        </div>
-        <div className="tickets">
-            {tasks.map((task, index) =>
-                <li key={index}>
-                    <textarea name="ticket" id="ticket"  className="ticket" value={task}></textarea>                        
-                    <button className="delete-task task-button" onClick={() => deleteTask(index)}>Delete</button>
-                    <button className="move-task task-button" onClick={() => moveTaskUp(index)}>Up</button>
-                    <button className="move-task task-button" onClick={() => moveTaskDown(index)}>Down</button>
+        <nav className="navbar">
+            <ul className="navbar-nav">
+                <li className="navbar-nav-element nav-user">
+                    <FontAwesomeIcon icon={faUser} className="navbar-nav-element_icon nav-user_arrow"/>
+                    <span className="navbar-nav-element_text nav-user_text" >{loggedInUser}</span>
                 </li>
-            )}  
-        </div>
+                <li className="navbar-nav-element">
+                    <FontAwesomeIcon icon={faClock} className="navbar-nav-element_icon"/>
+                    <span className="navbar-nav-element_text">{formattedTime}</span>
+                </li>
+                <li className="navbar-nav-element">
+                    <FontAwesomeIcon icon={faPlus} className="navbar-nav-element_icon" />
+                    <span className="navbar-nav-element_text">Create ticket </span>
+                </li>
+                <li className="navbar-nav-element">
+                    <FontAwesomeIcon icon={faRightFromBracket} className="navbar-nav-element_icon"/>
+                    <button className="navbar-nav-element_text header-content" onClick={logOut}>Log out</button>
+                </li>
+            </ul>
+        </nav>
+        <header className="header">
+            <div className="header-logOut">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
+        </header>
+        <main className="main">
+            <section className="main-ticketsByUser">
+                <div className="tickets">
+                    {tasks.map((task, index) =>
+                        <li key={index}>
+                            <textarea name="ticket" id="ticket"  className="ticket" value={task}></textarea>
+                            <div>{ticketTitle[index]}</div>
+                        </li>
+                    )}  
+                </div>
+            </section>
+            <section className="main-ticketsByUser">
+                <div className="tickets">
+                    {tasks.map((title, index) =>
+                        <li key={index}>
+                            <textarea name="ticket" id="ticket"  className="ticket" value={title}></textarea>
+                            <div>{tasks[index]}</div>
+                        </li>
+                    )}  
+                </div>
+            </section>
+        </main>
     </>
     )
 }

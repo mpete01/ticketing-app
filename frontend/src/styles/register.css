@@ -1,9 +1,18 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    --bg-primary: rgb(244, 247, 254);
+    --bg-secondary: rgb(48, 60, 115);
+    --text-primary: rgb(48, 60, 115);
+    --text-secondary: rgb(244, 247, 254);
+}
+
+body {
+    background-color: var(--bg-primary);
 }
 
 .register-form {
-    border: 1px solid black;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--text-primary);
     border-radius: 20px 20px 20px 20px;
     height: 22rem; /*30vh*/
     width: 20rem; /*20vw*/
@@ -19,16 +28,16 @@
     margin-top: 2vh;
     margin-bottom: 2vh;
     font-size: 2.5vh;
-    color: white;
+    color: var(--text-primary);
 }
 
 input {
     width: 12vw;
     height: 2vh;
-    border: 1px solid black;
+    border: 1px solid var(--text-primary);
     border-radius: 5px 5px 5px 5px;
     padding: 1em;
-    background-color: white;
+    background-color: var(--bg-primary);
     color: black;
     margin: 0.2em;
 }
@@ -51,16 +60,16 @@ input {
     min-width: 15rem;
     min-height: 2.5rem;
     color: white;
-    background-color: #646cff;
+    background-color: var(--bg-secondary);
     cursor: pointer;
-    border: 1px solid white;
+    border: 1px solid var(--text-secondary);
     border-radius: 20px 20px 20px 20px;
     margin-top: 3vh;
     font-size: 1.5rem;
 }
 
 .login {
-    color: aliceblue;
+    color: var(--text-secondary);
     font-size: 1rem;
 }
 
