@@ -30,6 +30,7 @@ main {
     background-color: var(--bg-primary);
     transition: width var(--transition-speed) ease;
     border-right: var(--text-primary);
+    border-right: 1px solid var(--text-primary);
 }
 
 .navbar-nav {

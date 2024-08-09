@@ -55,10 +55,18 @@ app.get("/", (req,res) => {
 
 //USER REGISTRATION FOR users TABLE
 app.post('/users/register', async (req, res) => {
-  const { name, email, password } = req.body
+  const { name, email, password, department } = req.body
 
   //hash password with bcrypt 
   let hashedPassword = await bcrypt.hash(password, 10)
+
+  //check if the user will have admin previliges
+  let is_admin = false
+  if(department === "IT" || department === "Maintainence") {
+    is_admin = true
+  } else {
+    is_admin = false
+  }
 
   let query = await db.query(
     `SELECT username, email, password FROM users WHERE email = '${email}'`,
@@ -76,8 +84,8 @@ app.post('/users/register', async (req, res) => {
   //if user is not registered update database with the user's credentials and hashed password 
   else {
     storedUser = await db.query(
-      `INSERT INTO users (username, email, password)
-      VALUES ('${name}', '${email}', '${hashedPassword}')`
+      `INSERT INTO users (username, email, password, department, is_admin)
+      VALUES ('${name}', '${email}', '${hashedPassword}', '${department}', '${is_admin}')`
     )
     res.send("New user successfully registered")
   }
@@ -168,30 +176,31 @@ app.post('/tasks/uploadNew', async (req, res) => {
 app.post('/tasks/getTasks', async (req, res) => {
   const { currentUserEmail } = req.body
 
-  let getCurrentUserId = await db.query(
-    `SELECT id FROM users WHERE email = '${currentUserEmail}'`
+  const currentUserDepartment = await db.query(
+    `SELECT department FROM users WHERE email = '${currentUserEmail}'`
   )
 
-  let ticketTitles = await db.query(
-    `SELECT title FROM tickets WHERE creator_id = '${getCurrentUserId[0].id}'`
+  let titles = []
+  let descriptions = []
+  let department = []
+  const onDepartment = await db.query(
+    `SELECT t.title, t.description, d.name AS department_name
+    FROM tickets t
+    INNER JOIN users u ON t.creator_id = u.id
+    INNER JOIN departments d ON t.department_id = d.id
+    WHERE u.department = '${currentUserDepartment[0].department}';`
   )
-  let queriedTicketTitles = []
-  for(let i = 0; i < ticketTitles.length; i++){
-    queriedTicketTitles.push(ticketTitles[i].title)
+  for(let i = 0; i < onDepartment.length; i++){
+    titles.push(onDepartment[i].title)
+    descriptions.push(onDepartment[i].description)
+    department.push(onDepartment[i].department_name)
   }
-
-  let tickets = await db.query(
-    `SELECT description from tickets WHERE creator_id = '${getCurrentUserId[0].id}'`
-  )  
-  let queriedTickets = []
-  for(let i = 0; i < tickets.length; i++){
-    queriedTickets.push(tickets[i].description)
-  }
-
   res.send({
-    "titles": queriedTicketTitles,
-    "tickets": queriedTickets
+    "title": titles,
+    "tickets": descriptions,
+    "department": department
   })
+
 })
 
 

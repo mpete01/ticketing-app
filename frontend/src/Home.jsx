@@ -12,7 +12,7 @@ function Homepage() {
     const [newTicket, setNewTicket] = useState("")
     const [newTicketTitle, setNewTicketTitle] = useState("")
     const [ticketTitle, setTicketTitle] = useState([])
-    const [tasks, setTasks] = useState([])
+    const [tickets, setTickets] = useState([])
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
@@ -32,13 +32,12 @@ function Homepage() {
     //get all the currently stored tasks by the logged in user and store them in the tasks variable
     useEffect(() => {
         const currentUserEmail = sessionStorage.getItem("user")
-        console.log(currentUserEmail)
+        //console.log(currentUserEmail)
         const query = async () => {
             try{
                 const response = await axios.post('http://localhost:3000/tasks/getTasks', { currentUserEmail })
-                console.log(response.data)
-                setTicketTitle(response.data.titles)
-                setTasks(response.data.tickets)
+                setTicketTitle(response.data.title)
+                setTickets(response.data.tickets)
             } catch(err){
                 console.log(err)
             }
@@ -99,32 +98,12 @@ function Homepage() {
 
     //delete task from UI and database
     const deleteTask = async (index) =>{
-        console.log(tasks[index])
+        console.log("balls")
+        //console.log(tasks[index])
         /*const updatedTasks = tasks.filter((_, i) => i !== index)
         setTasks(updatedTasks)
         const deletedTask = tasks[index]
        const deleteFromDb = await axios.post('http://localhost:3000/tasks/delTask', { deletedTask, loggedInUser })*/
-    }
-
-
-    //handle moving tasks up or down
-    const moveTaskUp = (index) => {
-        const updatedTasks = [...tasks]
-        if(index > 0){
-            [updatedTasks[index], updatedTasks[index - 1]] = [updatedTasks[index - 1], updatedTasks[index]]
-            setTasks(updatedTasks)
-        } else {
-            alert("kurva anyád")
-        }
-    }
-    const moveTaskDown = (index) => {
-        const updatedTasks = [...tasks]
-        if(index < tasks.length - 1){
-            [updatedTasks[index], updatedTasks[index + 1]] = [updatedTasks[index + 1], updatedTasks[index]]
-            setTasks(updatedTasks)
-        } else{
-            alert("kurva anyád")
-        }
     }
 
 
@@ -134,7 +113,7 @@ function Homepage() {
         sessionStorage.removeItem("user")
         location.reload()
     }
-
+    //<div>{ticketTitle[index]}</div>
     return(
     <>
         <nav className="navbar">
@@ -162,24 +141,40 @@ function Homepage() {
         </header>
         <main className="main">
             <section className="main-ticketsByUser">
-                <div className="tickets">
-                    {tasks.map((task, index) =>
+            <div className="tickets">
+                    {tickets.map((ticket, index) =>
                         <li key={index}>
-                            <textarea name="ticket" id="ticket"  className="ticket" value={task}></textarea>
-                            <div>{ticketTitle[index]}</div>
+                            
+                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
                         </li>
-                    )}  
+                    )}
                 </div>
+                <p>By User</p>
+                <p>------------------------------------------</p>
             </section>
-            <section className="main-ticketsByUser">
+            <section className="main-ticketsOnUser">
                 <div className="tickets">
-                    {tasks.map((title, index) =>
+                    {tickets.map((ticket, index) =>
                         <li key={index}>
-                            <textarea name="ticket" id="ticket"  className="ticket" value={title}></textarea>
-                            <div>{tasks[index]}</div>
+                            
+                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
                         </li>
-                    )}  
+                    )}
                 </div>
+                <p>On User</p>
+                <p>------------------------------------------</p>
+            </section>
+            <section className="main-ticketsOnUserDepartment">
+            <div className="tickets">
+                    {tickets.map((ticket, index) =>
+                        <li key={index}>
+                            
+                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
+                        </li>
+                    )}
+                </div>
+                <p>On User Department</p>
+                <p>------------------------------------------</p>
             </section>
         </main>
     </>

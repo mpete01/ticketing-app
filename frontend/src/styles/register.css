@@ -14,7 +14,7 @@ body {
     background-color: var(--bg-primary);
     border: 1px solid var(--text-primary);
     border-radius: 20px 20px 20px 20px;
-    height: 22rem; /*30vh*/
+    height: 24rem; /*30vh*/
     width: 20rem; /*20vw*/
     margin: auto;
     margin-top: 25vh;
@@ -41,6 +41,22 @@ input {
     color: black;
     margin: 0.2em;
 }
+
+.register-form-department {
+    padding-left: 10px;
+    width: 12vw;
+    margin: 0.2em;
+    border: 1px solid var(--text-primary);
+    border-radius: 5px 5px 5px 5px;
+    color: black;
+}
+
+.register-form-department_option {
+    width: 12vw;
+    height: 2vh;
+    
+}
+
 
 .show-password {
     position: absolute;
