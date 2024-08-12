@@ -7,12 +7,14 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 
-
 function Homepage() {
     const [newTicket, setNewTicket] = useState("")
     const [newTicketTitle, setNewTicketTitle] = useState("")
-    const [ticketTitle, setTicketTitle] = useState([])
-    const [tickets, setTickets] = useState([])
+    //tickets and their titles based on department
+    const [departmentTicketTitle, setDepartmentTicketTitle] = useState([])
+    const [departmentTickets, setDepartmentTickets] = useState([])
+    //tickets and their titles on current user
+    const [ticketsOnUser, setTicketsOnUser] = useState([])
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
@@ -32,17 +34,24 @@ function Homepage() {
     //get all the currently stored tasks by the logged in user and store them in the tasks variable
     useEffect(() => {
         const currentUserEmail = sessionStorage.getItem("user")
-        //console.log(currentUserEmail)
-        const query = async () => {
+        const queryOnDepartment = async () => {
             try{
-                const response = await axios.post('http://localhost:3000/tasks/getTasks', { currentUserEmail })
-                setTicketTitle(response.data.title)
-                setTickets(response.data.tickets)
+                const onDepartmentResponse = await axios.post('http://localhost:3000/tickets/getDepartmentTickets', { currentUserEmail })
+                setDepartmentTicketTitle(onDepartmentResponse.data.title)
+                setDepartmentTickets(onDepartmentResponse.data.tickets)
+                console.log(onDepartmentResponse.data)
             } catch(err){
                 console.log(err)
             }
         }
-        query()
+        queryOnDepartment()
+        const queryOnUser = async () => {
+            try{
+                const onUserResponse = await axios 
+            } catch(err) {
+                console.log(err)
+            }
+        }  
     }, [])
 
     //create a countdown for 10 minutes
@@ -140,23 +149,11 @@ function Homepage() {
             <div className="header-logOut">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
         </header>
         <main className="main">
-            <section className="main-ticketsByUser">
+        <section className="main-ticketsOnUser">
             <div className="tickets">
-                    {tickets.map((ticket, index) =>
+                    {ticketsOnUser.map((ticket, index) =>
                         <li key={index}>
-                            
-                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
-                        </li>
-                    )}
-                </div>
-                <p>By User</p>
-                <p>------------------------------------------</p>
-            </section>
-            <section className="main-ticketsOnUser">
-                <div className="tickets">
-                    {tickets.map((ticket, index) =>
-                        <li key={index}>
-                            
+                            <p className="tickets-onUser-titles">{departmentTicketTitle[index]}</p>
                             <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
                         </li>
                     )}
@@ -166,9 +163,9 @@ function Homepage() {
             </section>
             <section className="main-ticketsOnUserDepartment">
             <div className="tickets">
-                    {tickets.map((ticket, index) =>
+                    {departmentTickets.map((ticket, index) =>
                         <li key={index}>
-                            
+                            <p className="tickets-onDepartment-titles">{departmentTicketTitle[index]}</p>
                             <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
                         </li>
                     )}

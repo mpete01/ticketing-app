@@ -172,8 +172,8 @@ app.post('/tasks/uploadNew', async (req, res) => {
 })
 
 
-//GET TASKS FROM DATABASE OF THE CURRENT LOGGED IN USER
-app.post('/tasks/getTasks', async (req, res) => {
+//GET TICKETS FROM DATABASE OF THE CURRENT LOGGED IN USER'S DEPARTMENT
+app.post('/tickets/getDepartmentTickets', async (req, res) => {
   const { currentUserEmail } = req.body
 
   const currentUserDepartment = await db.query(
@@ -183,24 +183,62 @@ app.post('/tasks/getTasks', async (req, res) => {
   let titles = []
   let descriptions = []
   let department = []
+  let created_at = []
   const onDepartment = await db.query(
-    `SELECT t.title, t.description, d.name AS department_name
+    `SELECT t.title, t.description, t.created_at, d.name AS department_name
     FROM tickets t
     INNER JOIN users u ON t.creator_id = u.id
     INNER JOIN departments d ON t.department_id = d.id
-    WHERE u.department = '${currentUserDepartment[0].department}';`
+    WHERE u.department = '${currentUserDepartment[0].department}'
+    ORDER BY t.created_at ASC`
   )
   for(let i = 0; i < onDepartment.length; i++){
     titles.push(onDepartment[i].title)
     descriptions.push(onDepartment[i].description)
     department.push(onDepartment[i].department_name)
+    created_at.push(onDepartment[i].created_at)
   }
   res.send({
     "title": titles,
     "tickets": descriptions,
-    "department": department
+    "department": department,
+    "created_at": created_at
   })
+})
 
+
+//GET TICKETS FROM DATABASE THAT IS ON THE CURRENT USER
+app.post('/tickets/getTicketsOnUser', async (req, res) => {
+  const { currentUserEmail } = req.body
+
+  const currentUserId = await db.query(
+    `SELECT id FROM users WHERE email = '${currentUserEmail}'`
+  )
+
+  let titles = []
+  let descriptions = []
+  let department = []
+  let created_at = []
+  const onDepartment = await db.query(
+    `SELECT t.title, t.description, t.created_at, d.name AS department_name
+    FROM tickets t
+    INNER JOIN users u ON t.creator_id = u.id
+    INNER JOIN departments d ON t.department_id = d.id
+    WHERE u.department = '${currentUserId[0].department}'
+    ORDER BY t.created_at ASC`
+  )
+  for(let i = 0; i < onDepartment.length; i++){
+    titles.push(onDepartment[i].title)
+    descriptions.push(onDepartment[i].description)
+    department.push(onDepartment[i].department_name)
+    created_at.push(onDepartment[i].created_at)
+  }
+  res.send({
+    "title": titles,
+    "tickets": descriptions,
+    "department": department,
+    "created_at": created_at
+  })
 })
 
 
