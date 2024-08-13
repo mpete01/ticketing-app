@@ -14,10 +14,15 @@ function Homepage() {
     const [departmentTicketTitle, setDepartmentTicketTitle] = useState([])
     const [departmentTickets, setDepartmentTickets] = useState([])
     //tickets and their titles on current user
+    const [ticketTitlesOnUser, setTicketTitlesOnUser] = useState([])
     const [ticketsOnUser, setTicketsOnUser] = useState([])
+    //tickets and their titles create dby current user
+    const [ticketTitlesByUser, setTicketTitlesByUser] = useState([])
+    const [ticketsByUser, setTicketsByUser] = useState([])
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
+    const [ticketPopup, setTicketPopup] = useState(false)
 
 
     //get current time upon reloading and displaying it
@@ -34,24 +39,44 @@ function Homepage() {
     //get all the currently stored tasks by the logged in user and store them in the tasks variable
     useEffect(() => {
         const currentUserEmail = sessionStorage.getItem("user")
+
+        //get the tickets on the current user's department
         const queryOnDepartment = async () => {
             try{
                 const onDepartmentResponse = await axios.post('http://localhost:3000/tickets/getDepartmentTickets', { currentUserEmail })
                 setDepartmentTicketTitle(onDepartmentResponse.data.title)
                 setDepartmentTickets(onDepartmentResponse.data.tickets)
-                console.log(onDepartmentResponse.data)
+                //console.log(onDepartmentResponse.data)
             } catch(err){
                 console.log(err)
             }
         }
         queryOnDepartment()
+
+        //get the tickets that is on the current user
         const queryOnUser = async () => {
             try{
-                const onUserResponse = await axios 
+                const onUserResponse = await axios.post('http://localhost:3000/tickets/getTicketsOnUser', { currentUserEmail })
+                setTicketTitlesOnUser(onUserResponse.data.title)
+                setTicketsOnUser(onUserResponse.data.tickets)
+                //console.log(onUserResponse.data)
             } catch(err) {
                 console.log(err)
             }
         }  
+        queryOnUser()
+
+        //get tickets created by the current user
+        const queryByUser = async () => {
+            try {
+                const byUserResponse = await axios.post('http://localhost:3000/tickets/getTicketsByUser', { currentUserEmail })
+                setTicketTitlesByUser(byUserResponse.data.title)
+                setTicketsByUser(byUserResponse.data.tickets)
+            } catch(err) {
+                console.log(err)
+            }
+        }
+        queryByUser()
     }, [])
 
     //create a countdown for 10 minutes
@@ -93,16 +118,22 @@ function Homepage() {
 
 
     //add new task to UI and to the database too
-    const addTask = async () => {
-        if(newTicket.trim() !== "") {
+    const addTicketPopup = () => {
+        setTicketPopup(!ticketPopup)
+    }
+    const addTicket = async () => {
+        console.log("balls")
+        /*if(newTicket.trim() !== "") {
             setTasks(t => [...t, newTicket])
             setNewTicket("")
             console.log(newTaskTitle)
-            const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTicketTitle, newTicket, loggedInUser, time })
+            //const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTicketTitle, newTicket, loggedInUser, time })
         } else {
             alert("Empty task. Try again!")
-        }
+        }*/ 
     }
+
+    
 
 
     //delete task from UI and database
@@ -137,7 +168,7 @@ function Homepage() {
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faPlus} className="navbar-nav-element_icon" />
-                    <span className="navbar-nav-element_text">Create ticket </span>
+                    <button onClick={addTicketPopup} className="navbar-nav-element_text">Create ticket </button>
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faRightFromBracket} className="navbar-nav-element_icon"/>
@@ -151,14 +182,26 @@ function Homepage() {
         <main className="main">
         <section className="main-ticketsOnUser">
             <div className="tickets">
-                    {ticketsOnUser.map((ticket, index) =>
+                    {ticketsByUser.map((ticket, index) =>
                         <li key={index}>
-                            <p className="tickets-onUser-titles">{departmentTicketTitle[index]}</p>
+                            <p className="tickets-onUser-titles">{ticketTitlesByUser[index]}</p>
                             <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
                         </li>
                     )}
                 </div>
-                <p>On User</p>
+                <p>By User ^</p>
+                <p>------------------------------------------</p>
+        </section>
+        <section className="main-ticketsOnUser">
+            <div className="tickets">
+                    {ticketsOnUser.map((ticket, index) =>
+                        <li key={index}>
+                            <p className="tickets-onUser-titles">{ticketTitlesOnUser[index]}</p>
+                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
+                        </li>
+                    )}
+                </div>
+                <p>On User ^</p>
                 <p>------------------------------------------</p>
             </section>
             <section className="main-ticketsOnUserDepartment">
@@ -170,10 +213,26 @@ function Homepage() {
                         </li>
                     )}
                 </div>
-                <p>On User Department</p>
+                <p>On User Department ^</p>
                 <p>------------------------------------------</p>
             </section>
         </main>
+        {ticketPopup && (
+                   <div className="modal">
+                   <div onClick={addTicketPopup} className="overlay"></div>
+                   <div className="modal-content">
+                       <header className="modal-content_header">
+                            <p className="modal-content_header-user">{loggedInUser}</p>
+                            <button onClick={addTicketPopup} className="modal-content_header-close">X</button>
+                        </header>
+                        <section>
+                            <input type="text" placeholder="Title..." value={newTicketTitle} onChange={(e) => setNewTicketTitle(e.target.value)}/>
+                            <textarea name="ticket-body" id="ticket-body" placeholder="Ticket explained" value={newTicket} onChange={(e) => setNewTicket(e.target.value)}></textarea>
+                        </section>
+                        <button onClick={addTicket} type="submit">Add Ticket</button>           
+                   </div>
+               </div>
+            )}
     </>
     )
 }

@@ -214,30 +214,51 @@ app.post('/tickets/getTicketsOnUser', async (req, res) => {
   const currentUserId = await db.query(
     `SELECT id FROM users WHERE email = '${currentUserEmail}'`
   )
-
   let titles = []
   let descriptions = []
-  let department = []
-  let created_at = []
-  const onDepartment = await db.query(
-    `SELECT t.title, t.description, t.created_at, d.name AS department_name
+  const onUser = await db.query(
+    `SELECT t.id, t.title, t.description
     FROM tickets t
-    INNER JOIN users u ON t.creator_id = u.id
-    INNER JOIN departments d ON t.department_id = d.id
-    WHERE u.department = '${currentUserId[0].department}'
-    ORDER BY t.created_at ASC`
+    INNER JOIN ticket_assignments ta ON t.id = ta.ticket_id
+    INNER JOIN users u ON ta.user_id = u.id
+    WHERE u.id = '${currentUserId[0].id}'
+    ORDER BY t.id ASC`
   )
-  for(let i = 0; i < onDepartment.length; i++){
-    titles.push(onDepartment[i].title)
-    descriptions.push(onDepartment[i].description)
-    department.push(onDepartment[i].department_name)
-    created_at.push(onDepartment[i].created_at)
+  for(let i = 0; i < onUser.length; i++){
+    titles.push(onUser[i].title)
+    descriptions.push(onUser[i].description)
   }
   res.send({
     "title": titles,
-    "tickets": descriptions,
-    "department": department,
-    "created_at": created_at
+    "tickets": descriptions
+  })
+})
+
+
+//GET TICKETS CREATED BY CURRENT USER
+app.post('/tickets/getTicketsByUser', async (req, res) => {
+  const { currentUserEmail } = req.body
+
+  let currentUserId = await db.query(
+    `SELECT id, email FROM users WHERE email = '${currentUserEmail}' `
+  )
+
+
+  let titles = []
+  let description = []
+
+  const byUser = await db.query(
+    `SELECT id, title, description FROM tickets WHERE creator_id = '${currentUserId[0].id}' ORDER BY id ASC`
+  )
+  
+  for(let i = 0; i < byUser.length; i++){
+    titles.push(byUser[i].title)
+    description.push(byUser[i].description)
+  }
+
+  res.send({
+    "title": titles,
+    "tickets": description
   })
 })
 
