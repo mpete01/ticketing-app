@@ -227,6 +227,15 @@ function Homepage() {
                         </header>
                         <section>
                             <input type="text" placeholder="Title..." value={newTicketTitle} onChange={(e) => setNewTicketTitle(e.target.value)}/>
+                            <select name="department-select">
+                                <option value="department">Select a department</option>
+                                <option value="IT">IT</option>
+                                <option value="Maintainance">Maintainance</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Marketing">Marketing</option>
+                            </select>
+                            <input type="email" placeholder="Assign the ticket to someone (use their email address)" />
                             <textarea name="ticket-body" id="ticket-body" placeholder="Ticket explained" value={newTicket} onChange={(e) => setNewTicket(e.target.value)}></textarea>
                         </section>
                         <button onClick={addTicket} type="submit">Add Ticket</button>           
