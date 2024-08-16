@@ -276,6 +276,10 @@ app.post('/tasks/delTask', async (req, res) => {
   )
 })
 
+
+//LOAD THE CLICKED TICKET
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

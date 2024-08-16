@@ -8,6 +8,7 @@ import Login from './components/Login'
 import Homepage from './Home.jsx'
 import ProtectedRoutes from './components/ProtectedRoutes.jsx'
 import NoRoute from './components/Noroute.jsx'
+import LoadTicket from './components/Ticket.jsx'
 
 
 
@@ -18,7 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path='/Login' element={<Login />}/>
         <Route path="/Register" element={<Register />} />
         <Route path='*' element={<NoRoute />}/>
-        
+        <Route path="/Ticket" element={<LoadTicket />} />
        
         <Route element={<ProtectedRoutes />}>
           <Route path='/App' element={<App />} />
