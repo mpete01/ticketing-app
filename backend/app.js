@@ -145,30 +145,30 @@ app.post('/users/login', async (req, res) => {
 
 
 //UPLOAD NEW TASK TO DATABASE
-app.post('/tasks/uploadNew', async (req, res) => {
-  let { newTaskTitle, newTask, loggedInUser, time } = req.body
+app.post('/tickets/uploadNewTicket', async (req, res) => {
+  const { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time } = req.body
 
-  let loggedInUserid = await db.query(
+  const loggedInUserid = await db.query(
     `SELECT id FROM users
     WHERE email='${loggedInUser}'`
   )
-  console.log({ newTaskTitle, newTask, loggedInUser, time })
+  const departmentId = await db.query(
+    `SELECT department FROM users WHERE email = '${newTicketForUser}'`
+  )
+
+  console.log({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
   console.log(loggedInUserid[0].id)
-  
-  //format the date to yy-mm-dd hh:mm:ss
-  time = new Date()
-  time = `${time.getFullYear()}-${time.getMonth()}-${time.getDate()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
 
   //add the task to the database
-  let query = await db.query(
-    `INSERT INTO tickets (title, description, created_at, updated_at, creator_id)
-    VALUES ('${newTaskTitle}', '${newTask}', '${time}', '${time}', '${loggedInUserid[0].id}' )`,
+  /*const query = await db.query(
+    `INSERT INTO tickets (title, description, creator_id, department_id)
+    VALUES ('New Ticket', 'Detailed description', :user_id, :department_id);`,
     (err) => {
       if(err){
         throw err
       }
     }
-  )
+  )*/
 })
 
 

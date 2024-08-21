@@ -106,7 +106,7 @@ section {
     flex: 1;
 }
 
-/**/
+/*CSS FOR ADD TICKET POPUP*/
 body.active-modal {
     overflow-y: hidden;
 }
@@ -141,8 +141,21 @@ body.active-modal {
     color: black;
     padding: 14px 28px;
     border-radius: 3px;
-    max-width: 600px;
+    /*max-width: 600px;*/
     min-width: 300px;
+    width: 90vw;
+    height: 50vh;
+
+}
+
+.modal-content_header, .modal-tiketSection_department-and-assignment {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-tiketSection_department-and-assignment > input {
+    width: 100%;
 }
 
 .close-modal {
@@ -150,4 +163,22 @@ body.active-modal {
     top: 10px;
     right: 10px;
     padding: 5px 7px;
+}
+
+.modal-ticketSection_ticket-title {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.modal-ticketSection_ticket-body {
+    width: 100%;
+    height: 20vh;
+    border: 1px solid var(--text-primary);
+    border-radius: 5px 5px 5px 5px;
+}
+
+.modal-add-ticket_button {
+    margin-top: 10px;
+    color: var(--text-primary);
+    text-decoration: underline;
 }

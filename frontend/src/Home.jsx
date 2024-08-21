@@ -19,6 +19,9 @@ function Homepage() {
     //tickets and their titles create dby current user
     const [ticketTitlesByUser, setTicketTitlesByUser] = useState([])
     const [ticketsByUser, setTicketsByUser] = useState([])
+    //new ticket assigned to specific user
+    const [newTicketForUser, setNewTicketForUser] = useState("")
+
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
@@ -122,15 +125,16 @@ function Homepage() {
         setTicketPopup(!ticketPopup)
     }
     const addTicket = async () => {
-        console.log("balls")
-        /*if(newTicket.trim() !== "") {
-            setTasks(t => [...t, newTicket])
-            setNewTicket("")
-            console.log(newTaskTitle)
-            //const uploadNewTask = await axios.post('http://localhost:3000/tasks/uploadNew', { newTicketTitle, newTicket, loggedInUser, time })
-        } else {
-            alert("Empty task. Try again!")
-        }*/ 
+        if(newTicketTitle.trim() !== "" && newTicket.trim() !== ""){
+            console.log(newTicketForUser)
+            const sentTicket = axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser ,time })
+            setTicketPopup(!ticketPopup)
+            
+        }
+        else {
+            alert("Please fill out every field")
+        }
+        location.reload()
     }
 
     
@@ -225,20 +229,22 @@ function Homepage() {
                             <p className="modal-content_header-user">{loggedInUser}</p>
                             <button onClick={addTicketPopup} className="modal-content_header-close">X</button>
                         </header>
-                        <section>
-                            <input type="text" placeholder="Title..." value={newTicketTitle} onChange={(e) => setNewTicketTitle(e.target.value)}/>
-                            <select name="department-select">
-                                <option value="department">Select a department</option>
-                                <option value="IT">IT</option>
-                                <option value="Maintainance">Maintainance</option>
-                                <option value="HR">HR</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Marketing">Marketing</option>
-                            </select>
-                            <input type="email" placeholder="Assign the ticket to someone (use their email address)" />
-                            <textarea name="ticket-body" id="ticket-body" placeholder="Ticket explained" value={newTicket} onChange={(e) => setNewTicket(e.target.value)}></textarea>
+                        <section className="modal-ticketSection">
+                            <div className="modal-tiketSection_department-and-assignment">
+                                <input type="email" className="assigned-to" placeholder="Assign to user (use email address)" value={newTicketForUser} onChange={(e) => setNewTicketForUser(e.target.value)}/>
+                                <select className="modal-ticketSection_department-select">
+                                    <option value="department">Select a department</option>
+                                    <option value="IT">IT</option>
+                                    <option value="Maintainance">Maintainance</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Marketing">Marketing</option>
+                                </select>
+                            </div>
+                            <input type="text" className="modal-ticketSection_ticket-title" placeholder="Title..." value={newTicketTitle} onChange={(e) => setNewTicketTitle(e.target.value)}/> <br />
+                            <textarea name="ticket-body" className="modal-ticketSection_ticket-body" id="ticket-body" placeholder="Ticket explained" value={newTicket} onChange={(e) => setNewTicket(e.target.value)}></textarea>
                         </section>
-                        <button onClick={addTicket} type="submit">Add Ticket</button>           
+                        <button onClick={addTicket} type="submit" className="modal-add-ticket_button">Add Ticket</button>           
                    </div>
                </div>
             )}
