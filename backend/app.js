@@ -156,13 +156,25 @@ app.post('/tickets/uploadNewTicket', async (req, res) => {
     `SELECT department FROM users WHERE email = '${newTicketForUser}'`
   )
 
-  console.log({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
-  console.log(loggedInUserid[0].id)
+  /*console.log({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
+  console.log(`\n ${loggedInUserid[0].id}\n`)
+  console.log(departmentId[0].department)*/
 
-  //add the task to the database
-  /*const query = await db.query(
-    `INSERT INTO tickets (title, description, creator_id, department_id)
-    VALUES ('New Ticket', 'Detailed description', :user_id, :department_id);`,
+  //add the ticket to database (not yet assigned to user)
+  const addNewTicket = await db.query(
+    `INSERT INTO tickets (title, description, created_at, creator_id, department_id)
+    VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].department}');`,
+    (err) => {
+      if(err){
+        throw err
+      }
+    }
+  )
+  //assign newly created ticket to specified user
+
+  /*const assignNewTicket = await db.query(
+    `INSERT INTO ticket_assignments (ticket_id, user_id, assigned_at)
+    VALUES ('${getNewTicketId}', :assigned_user_id, NOW());`,
     (err) => {
       if(err){
         throw err

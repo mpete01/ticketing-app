@@ -27,7 +27,7 @@ function Homepage() {
     const [isTimerRunning, setIsTimerRunning] = useState(true)
     const [ticketPopup, setTicketPopup] = useState(false)
 
-
+    
     //get current time upon reloading and displaying it
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -125,16 +125,13 @@ function Homepage() {
         setTicketPopup(!ticketPopup)
     }
     const addTicket = async () => {
-        if(newTicketTitle.trim() !== "" && newTicket.trim() !== ""){
-            console.log(newTicketForUser)
-            const sentTicket = axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser ,time })
+        if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){
+            const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
             setTicketPopup(!ticketPopup)
-            
         }
         else {
             alert("Please fill out every field")
         }
-        location.reload()
     }
 
     
@@ -158,6 +155,14 @@ function Homepage() {
         location.reload()
     }
     //<div>{ticketTitle[index]}</div>
+    /*<select className="modal-ticketSection_department-select"> 
+                                    <option value="department">Select a department</option>
+                                    <option value="IT">IT</option>
+                                    <option value="Maintainance">Maintainance</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Marketing">Marketing</option>
+                                </select>*/
     return(
     <>
         <nav className="navbar">
@@ -222,7 +227,7 @@ function Homepage() {
             </section>
         </main>
         {ticketPopup && (
-                   <div className="modal">
+                <div className="modal">
                    <div onClick={addTicketPopup} className="overlay"></div>
                    <div className="modal-content">
                        <header className="modal-content_header">
@@ -232,14 +237,7 @@ function Homepage() {
                         <section className="modal-ticketSection">
                             <div className="modal-tiketSection_department-and-assignment">
                                 <input type="email" className="assigned-to" placeholder="Assign to user (use email address)" value={newTicketForUser} onChange={(e) => setNewTicketForUser(e.target.value)}/>
-                                <select className="modal-ticketSection_department-select">
-                                    <option value="department">Select a department</option>
-                                    <option value="IT">IT</option>
-                                    <option value="Maintainance">Maintainance</option>
-                                    <option value="HR">HR</option>
-                                    <option value="Finance">Finance</option>
-                                    <option value="Marketing">Marketing</option>
-                                </select>
+                                
                             </div>
                             <input type="text" className="modal-ticketSection_ticket-title" placeholder="Title..." value={newTicketTitle} onChange={(e) => setNewTicketTitle(e.target.value)}/> <br />
                             <textarea name="ticket-body" className="modal-ticketSection_ticket-body" id="ticket-body" placeholder="Ticket explained" value={newTicket} onChange={(e) => setNewTicket(e.target.value)}></textarea>

@@ -143,9 +143,10 @@ body.active-modal {
     border-radius: 3px;
     /*max-width: 600px;*/
     min-width: 300px;
-    width: 90vw;
-    height: 50vh;
-
+    min-height: 300px;
+    width: 100%;
+    height: fit-content;
+    overflow: auto;
 }
 
 .modal-content_header, .modal-tiketSection_department-and-assignment {
