@@ -148,39 +148,50 @@ app.post('/users/login', async (req, res) => {
 app.post('/tickets/uploadNewTicket', async (req, res) => {
   const { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time } = req.body
 
+  res.send("balls")
   const loggedInUserid = await db.query(
     `SELECT id FROM users
     WHERE email='${loggedInUser}'`
   )
-  const departmentId = await db.query(
+  const assignedToUserDepartment = await db.query(
     `SELECT department FROM users WHERE email = '${newTicketForUser}'`
   )
 
-  /*console.log({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
-  console.log(`\n ${loggedInUserid[0].id}\n`)
-  console.log(departmentId[0].department)*/
+  const departmentId = await db.query(
+    `SELECT id from departments WHERE name = '${assignedToUserDepartment[0].department}'`
+  )
 
   //add the ticket to database (not yet assigned to user)
   const addNewTicket = await db.query(
     `INSERT INTO tickets (title, description, created_at, creator_id, department_id)
-    VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].department}');`,
+    VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}');`,
     (err) => {
       if(err){
         throw err
       }
     }
   )
-  //assign newly created ticket to specified user
 
-  /*const assignNewTicket = await db.query(
-    `INSERT INTO ticket_assignments (ticket_id, user_id, assigned_at)
-    VALUES ('${getNewTicketId}', :assigned_user_id, NOW());`,
+  //assign newly created ticket to specified user
+  const getNewTicketId = await db.query(
+    `SELECT id FROM tickets
+    WHERE created_at = '${time}'`
+  )
+
+  //assign ticekt to the user's department the ticket is assigned to
+  const assignedToUsersDepartment = await db.query(`
+    SELECT id FROM users WHERE email = '${newTicketForUser}'
+  `)
+
+  const assignNewTicket = await db.query(
+    `INSERT INTO ticket_assignments (ticket_id, user_id)
+    VALUES ('${getNewTicketId[0].id}', '${assignedToUsersDepartment[0].id}');`,
     (err) => {
       if(err){
         throw err
       }
     }
-  )*/
+  )
 })
 
 
@@ -196,20 +207,19 @@ app.post('/tickets/getDepartmentTickets', async (req, res) => {
   let descriptions = []
   let department = []
   let created_at = []
-  const onDepartment = await db.query(
-    `SELECT t.title, t.description, t.created_at, d.name AS department_name
+  const onDepartment = await db.query(`
+    SELECT t.id, t.title, t.description
     FROM tickets t
-    INNER JOIN users u ON t.creator_id = u.id
     INNER JOIN departments d ON t.department_id = d.id
-    WHERE u.department = '${currentUserDepartment[0].department}'
-    ORDER BY t.created_at ASC`
-  )
+    WHERE d.name = '${currentUserDepartment[0].department}';
+  `)
   for(let i = 0; i < onDepartment.length; i++){
     titles.push(onDepartment[i].title)
     descriptions.push(onDepartment[i].description)
     department.push(onDepartment[i].department_name)
     created_at.push(onDepartment[i].created_at)
   }
+
   res.send({
     "title": titles,
     "tickets": descriptions,

@@ -127,6 +127,10 @@ function Homepage() {
     const addTicket = async () => {
         if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){
             const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
+            console.log(sentTicket)
+            setNewTicketForUser("")
+            setNewTicketTitle("")
+            setNewTicket("")
             setTicketPopup(!ticketPopup)
         }
         else {
