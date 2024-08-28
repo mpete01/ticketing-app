@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import './styles/Home.css';
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { faClock } from '@fortawesome/free-solid-svg-icons';
+//svg icons for the nav bar
+import { faPlus, faRightFromBracket, faUser, faClock } from '@fortawesome/free-solid-svg-icons';
+//svg icons for the ticket actions
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faCheck} from '@fortawesome/free-solid-svg-icons';
+
 
 function Homepage() {
     const [newTicket, setNewTicket] = useState("")
@@ -158,15 +161,7 @@ function Homepage() {
         sessionStorage.removeItem("user")
         location.reload()
     }
-    //<div>{ticketTitle[index]}</div>
-    /*<select className="modal-ticketSection_department-select"> 
-                                    <option value="department">Select a department</option>
-                                    <option value="IT">IT</option>
-                                    <option value="Maintainance">Maintainance</option>
-                                    <option value="HR">HR</option>
-                                    <option value="Finance">Finance</option>
-                                    <option value="Marketing">Marketing</option>
-                                </select>*/
+ 
     return(
     <>
         <nav className="navbar">
@@ -193,41 +188,41 @@ function Homepage() {
             <div className="header-logOut">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
         </header>
         <main className="main">
-        <section className="main-ticketsOnUser">
-            <div className="tickets">
-                    {ticketsByUser.map((ticket, index) =>
-                        <li key={index}>
-                            <p className="tickets-onUser-titles">{ticketTitlesByUser[index]}</p>
-                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
-                        </li>
-                    )}
-                </div>
-                <p>By User ^</p>
-                <p>------------------------------------------</p>
-        </section>
-        <section className="main-ticketsOnUser">
-            <div className="tickets">
-                    {ticketsOnUser.map((ticket, index) =>
-                        <li key={index}>
-                            <p className="tickets-onUser-titles">{ticketTitlesOnUser[index]}</p>
-                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
-                        </li>
-                    )}
-                </div>
-                <p>On User ^</p>
-                <p>------------------------------------------</p>
+            <section className="main-ticketsOnUser">
+                <div className="tickets">
+                        {ticketsByUser.map((ticket, index) =>
+                            <li key={index}>
+                                <p className="tickets-onUser-titles">{ticketTitlesByUser[index]}</p>
+                                <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
+                            </li>
+                        )}
+                    </div>
+                    <p>By User ^</p>
+                    <p>------------------------------------------</p>
+            </section>
+            <section className="main-ticketsOnUser">
+                <div className="tickets">
+                        {ticketsOnUser.map((ticket, index) =>
+                            <li key={index}>
+                                <p className="tickets-onUser-titles">{ticketTitlesOnUser[index]}</p>
+                                <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
+                            </li>
+                        )}
+                    </div>
+                    <p>On User ^</p>
+                    <p>------------------------------------------</p>
             </section>
             <section className="main-ticketsOnUserDepartment">
-            <div className="tickets">
-                    {departmentTickets.map((ticket, index) =>
-                        <li key={index}>
-                            <p className="tickets-onDepartment-titles">{departmentTicketTitle[index]}</p>
-                            <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
-                        </li>
-                    )}
-                </div>
-                <p>On User Department ^</p>
-                <p>------------------------------------------</p>
+                <div className="tickets">
+                        {departmentTickets.map((ticket, index) =>
+                            <li key={index}>
+                                <p className="tickets-onDepartment-titles">{departmentTicketTitle[index]}</p>
+                                <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
+                            </li>
+                        )}
+                    </div>
+                    <p>On User Department ^</p>
+                    <p>------------------------------------------</p>
             </section>
         </main>
         {ticketPopup && (
