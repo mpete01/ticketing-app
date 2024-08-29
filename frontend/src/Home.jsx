@@ -4,24 +4,14 @@ import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //svg icons for the nav bar
 import { faPlus, faRightFromBracket, faUser, faClock } from '@fortawesome/free-solid-svg-icons';
-//svg icons for the ticket actions
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { faClipboard } from '@fortawesome/free-solid-svg-icons';
-import { faCheck} from '@fortawesome/free-solid-svg-icons';
-
+import LoadTicketsByUser from "./components/TicketsByUser.jsx";
+import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
+import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx"; 
 
 function Homepage() {
     const [newTicket, setNewTicket] = useState("")
     const [newTicketTitle, setNewTicketTitle] = useState("")
-    //tickets and their titles based on department
-    const [departmentTicketTitle, setDepartmentTicketTitle] = useState([])
-    const [departmentTickets, setDepartmentTickets] = useState([])
-    //tickets and their titles on current user
-    const [ticketTitlesOnUser, setTicketTitlesOnUser] = useState([])
-    const [ticketsOnUser, setTicketsOnUser] = useState([])
-    //tickets and their titles create dby current user
-    const [ticketTitlesByUser, setTicketTitlesByUser] = useState([])
-    const [ticketsByUser, setTicketsByUser] = useState([])
+
     //new ticket assigned to specific user
     const [newTicketForUser, setNewTicketForUser] = useState("")
 
@@ -41,49 +31,6 @@ function Homepage() {
     },[])
     const formattedTime = time.toLocaleTimeString()
 
-
-    //get all the currently stored tasks by the logged in user and store them in the tasks variable
-    useEffect(() => {
-        const currentUserEmail = sessionStorage.getItem("user")
-
-        //get the tickets on the current user's department
-        const queryOnDepartment = async () => {
-            try{
-                const onDepartmentResponse = await axios.post('http://localhost:3000/tickets/getDepartmentTickets', { currentUserEmail })
-                setDepartmentTicketTitle(onDepartmentResponse.data.title)
-                setDepartmentTickets(onDepartmentResponse.data.tickets)
-                //console.log(onDepartmentResponse.data)
-            } catch(err){
-                console.log(err)
-            }
-        }
-        queryOnDepartment()
-
-        //get the tickets that is on the current user
-        const queryOnUser = async () => {
-            try{
-                const onUserResponse = await axios.post('http://localhost:3000/tickets/getTicketsOnUser', { currentUserEmail })
-                setTicketTitlesOnUser(onUserResponse.data.title)
-                setTicketsOnUser(onUserResponse.data.tickets)
-                //console.log(onUserResponse.data)
-            } catch(err) {
-                console.log(err)
-            }
-        }  
-        queryOnUser()
-
-        //get tickets created by the current user
-        const queryByUser = async () => {
-            try {
-                const byUserResponse = await axios.post('http://localhost:3000/tickets/getTicketsByUser', { currentUserEmail })
-                setTicketTitlesByUser(byUserResponse.data.title)
-                setTicketsByUser(byUserResponse.data.tickets)
-            } catch(err) {
-                console.log(err)
-            }
-        }
-        queryByUser()
-    }, [])
 
     //create a countdown for 10 minutes
     useEffect(() => {
@@ -141,8 +88,6 @@ function Homepage() {
         }
     }
 
-    
-
 
     //delete task from UI and database
     const deleteTask = async (index) =>{
@@ -161,7 +106,8 @@ function Homepage() {
         sessionStorage.removeItem("user")
         location.reload()
     }
- 
+
+
     return(
     <>
         <nav className="navbar">
@@ -188,42 +134,9 @@ function Homepage() {
             <div className="header-logOut">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
         </header>
         <main className="main">
-            <section className="main-ticketsOnUser">
-                <div className="tickets">
-                        {ticketsByUser.map((ticket, index) =>
-                            <li key={index}>
-                                <p className="tickets-onUser-titles">{ticketTitlesByUser[index]}</p>
-                                <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
-                            </li>
-                        )}
-                    </div>
-                    <p>By User ^</p>
-                    <p>------------------------------------------</p>
-            </section>
-            <section className="main-ticketsOnUser">
-                <div className="tickets">
-                        {ticketsOnUser.map((ticket, index) =>
-                            <li key={index}>
-                                <p className="tickets-onUser-titles">{ticketTitlesOnUser[index]}</p>
-                                <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
-                            </li>
-                        )}
-                    </div>
-                    <p>On User ^</p>
-                    <p>------------------------------------------</p>
-            </section>
-            <section className="main-ticketsOnUserDepartment">
-                <div className="tickets">
-                        {departmentTickets.map((ticket, index) =>
-                            <li key={index}>
-                                <p className="tickets-onDepartment-titles">{departmentTicketTitle[index]}</p>
-                                <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
-                            </li>
-                        )}
-                    </div>
-                    <p>On User Department ^</p>
-                    <p>------------------------------------------</p>
-            </section>
+            <LoadTicketsByUser />
+            <LoadTicketsOnUser />
+            <LoadTicketsOnUserDepartment />
         </main>
         {ticketPopup && (
                 <div className="modal">
