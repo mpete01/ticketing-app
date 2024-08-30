@@ -268,6 +268,7 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
 
   let titles = []
   let description = []
+  let ids = []
 
   const byUser = await db.query(
     `SELECT id, title, description FROM tickets WHERE creator_id = '${currentUserId[0].id}' ORDER BY id ASC`
@@ -276,9 +277,11 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
   for(let i = 0; i < byUser.length; i++){
     titles.push(byUser[i].title)
     description.push(byUser[i].description)
+    ids.push(byUser[i].id)
   }
 
   res.send({
+    "id": ids,
     "title": titles,
     "tickets": description
   })
@@ -286,9 +289,9 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
 
 
 //DELETE TASK FROM DATABASE
-app.post('/tasks/delTask', async (req, res) => {
-  const { deletedTask, loggedInUser } = req.body
-  let getCurrentUserId = await db.query(
+app.post('/tasks/deleteTicket', async (req, res) => {
+  const { loggedInUser, deletedTask } = req.body
+  const getCurrentUserId = await db.query(
     `SELECT id from users WHERE email = '${loggedInUser}'`
   )
 

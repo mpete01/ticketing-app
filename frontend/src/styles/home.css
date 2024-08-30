@@ -86,12 +86,23 @@ body {
 
 header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 1rem;
     margin-bottom: 2rem;
 }
 
+.help {
+    display: flex;
+    margin-left: 5rem;
+    width: fit-content;
+}
+
+.help-icons {
+    margin-right: 2rem;
+}
+
 .header-logOut {
+    justify-content: flex-end;
     border: 1px solid var(--text-primary);
     border-radius: 25px ;
     padding: 0.8rem;

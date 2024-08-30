@@ -4,6 +4,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //svg icons for the nav bar
 import { faPlus, faRightFromBracket, faUser, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan, faClipboard, faCheck, faComment, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
 import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
 import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx"; 
@@ -131,6 +132,12 @@ function Homepage() {
             </ul>
         </nav>
         <header className="header">
+            <div className="help">
+                <p className="help-icons">Solve ticket - <FontAwesomeIcon icon={faCheck}/></p>
+                <p className="help-icons">Assign ticket to user - <FontAwesomeIcon icon={faClipboard}/></p>                   
+                <p className="help-icons">Delete ticket -  <FontAwesomeIcon icon={faTrashCan}/></p>                    
+                <p className="help-icons">Add comment - <FontAwesomeIcon icon={faComment}/></p>
+            </div>
             <div className="header-logOut">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
         </header>
         <main className="main">

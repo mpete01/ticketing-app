@@ -31,7 +31,7 @@ function LoadTicketsOnUser() {
                 {ticketsOnUser.map((ticket, index) =>
                     <li key={index}>
                         <p className="tickets-onUser-titles">{ticketTitlesOnUser[index]}</p>
-                        <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea>
+                        <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea><br />
                         <button className="ticket-actions solve"><FontAwesomeIcon icon={faCheck} /></button>
                         <button className="ticket-actions change_owner"><FontAwesomeIcon icon={faClipboard} /></button>
                         <button className="ticket-actions delete"><FontAwesomeIcon icon={faTrashCan} /></button>
