@@ -98,7 +98,7 @@ app.post('/users/login', async (req, res) => {
 
   //Querying the user based on the provided email
   let query = await db.query(
-    `SELECT id, username, email, password FROM users WHERE email = '${email}'`,
+    `SELECT id, username, email, password, is_admin FROM users WHERE email = '${email}'`,
     (err) => {
       if(err){
         throw err
@@ -126,11 +126,13 @@ app.post('/users/login', async (req, res) => {
         const token = jwt.sign({id}, process.env.JWT_KEY, {
           expiresIn: "8h",
         })
+        const is_admin = query[0].is_admin
         console.log("Successful authenitcation, email and password are correct")
         //sending back the token to client
         res.json({
           auth: false,
           token: token,
+          is_admin: is_admin,
           result: query[0]
         })
       }
@@ -290,19 +292,22 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
 
 //DELETE TASK FROM DATABASE
 app.post('/tasks/deleteTicket', async (req, res) => {
-  const { loggedInUser, deletedTask } = req.body
-  const getCurrentUserId = await db.query(
-    `SELECT id from users WHERE email = '${loggedInUser}'`
+  const { delTicketIndex } = req.body
+
+  //delete tickt assigment from database to prevent foreign key contraints
+  const deleteForeginKey = await db.query(
+    `DELETE FROM ticket_assignments WHERE ticket_id = '${delTicketIndex}'`
   )
 
+  //delete actual ticket from database 
   const query = await db.query(
-    `DELETE FROM tickets
-    WHERE description = '${deletedTask}' AND creator_id = '${getCurrentUserId[0].id}'`
+    `DELETE FROM tickets WHERE id = '${delTicketIndex}'`
   )
+
+  res.json({
+    "result": "Ticket deleted successfully"
+  })
 })
-
-
-//LOAD THE CLICKED TICKET
 
 
 app.listen(port, () => {
