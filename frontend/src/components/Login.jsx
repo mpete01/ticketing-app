@@ -30,6 +30,7 @@ function Login(){
                 console.log(sentData.data)
                 sessionStorage.setItem("user", email)
                 sessionStorage.setItem("token", sentData.data.token)
+                sessionStorage.setItem("is_admin", sentData.data.is_admin)
                 navigate('/')
             }
         } catch(err){

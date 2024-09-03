@@ -76,30 +76,17 @@ function Homepage() {
         setTicketPopup(!ticketPopup)
     }
     const addTicket = async () => {
-        if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){
+        if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){ /**/
             const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
             console.log(sentTicket)
             setNewTicketForUser("")
             setNewTicketTitle("")
             setNewTicket("")
             setTicketPopup(!ticketPopup)
+            window.location.reload()
         }
-        else {
-            alert("Please fill out every field")
-        }
+
     }
-
-
-    //delete task from UI and database
-    const deleteTask = async (index) =>{
-        console.log("balls")
-        //console.log(tasks[index])
-        /*const updatedTasks = tasks.filter((_, i) => i !== index)
-        setTasks(updatedTasks)
-        const deletedTask = tasks[index]
-       const deleteFromDb = await axios.post('http://localhost:3000/tasks/delTask', { deletedTask, loggedInUser })*/
-    }
-
 
     //handle logging out
     const logOut = () => {
