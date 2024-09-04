@@ -310,6 +310,26 @@ app.post('/tasks/deleteTicket', async (req, res) => {
 })
 
 
+//TIKCET REASSIGNMENT
+app.post('/tickets/reassignTickets', async (req, res) => {
+  const { ticketToBeAssigned, assignedToUser } = req.body
+
+  //get the ID of the user that is being assigned
+  const newUserId = await db.query(`SELECT id FROM users WHERE email = '${assignedToUser}'`)
+
+  const reassignment = await db.query(`
+    UPDATE ticket_assignments
+    SET user_id = '${newUserId[0].id}'
+    WHERE ticket_id = '${ticketToBeAssigned}';`, (err) => {
+      if(err){
+        throw err
+      }
+    })
+  res.json({
+    "result": `Ticket successfully reassigned to ${assignedToUser}`
+  })
+})
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
