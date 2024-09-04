@@ -5,10 +5,16 @@ function TicektAssignment() {
     const [assignedToUser, setAssignedToUser] = useState("")
     const [popup, setPopup] = useState(false)
 
+    const closePopup = () => {
+        setPopup(!popup)
+    }
+
     return <>
-        <div className="modal">
-            <input type="email" onChange={(e) => setAssignedToUser(e.target.value)} placeholder="Enter the user's email you want to give the ticket to"/>
-            <button>Assign ticket to {assignedToUser}</button>
+        <div className="popup">
+            <div className="popup-open"></div>
+            <h2>Popup Content</h2>
+            <p>This is the content of the popup window.</p>
+            <button onClick={closePopup}>Close</button>
         </div>
     </>
 }

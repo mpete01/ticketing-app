@@ -5,3 +5,28 @@
     align-items: center;
 }
 
+.popup-open {
+    overflow: hidden;
+}
+  
+.popup {
+    position: fixed;
+    width: 50vw;
+    height: fit-content;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index:  
+   9999;
+}
+
+.popup-open_email {
+    width: 100%;
+}
+
+.popup-open .popup {
+    display: block;
+}
