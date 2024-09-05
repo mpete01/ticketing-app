@@ -291,7 +291,7 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
 
 
 //DELETE TASK FROM DATABASE
-app.post('/tasks/deleteTicket', async (req, res) => {
+app.post('/tickets/deleteTicket', async (req, res) => {
   const { delTicketIndex } = req.body
 
   //delete tickt assigment from database to prevent foreign key contraints
@@ -328,6 +328,34 @@ app.post('/tickets/reassignTickets', async (req, res) => {
   res.json({
     "result": `Ticket successfully reassigned to ${assignedToUser}`
   })
+})
+
+
+//LOAD ALREADY EXISTING TICKETS
+app.post('/tikcets/existingComments', async (req, res) => {
+  const { commentTicketId, currentUserEmail } = req.body
+
+  //const submittingUserId = await db.query(`SELECT id FROM users WHERE email = '${currentUserEmail}'`)
+
+  const existingComments = await db.query(`SELECT comment, created_by, created_at FROM ticket_comments WHERE ticket_id = '${commentTicketId}'`)
+
+  comments = []
+  created_by = []
+  created_at = []
+  for(let i = 0; i < existingComments.length; i++){
+    comments.push(existingComments[i].comment)
+    created_by.push(existingComments[i].created_by)
+    created_at.push(existingComments[i].created_at)
+  }
+  
+  res.send({
+    "comments": comments,
+    "created_by": created_by,
+    "created_at": created_at
+  })
+  /*const submitNewComment = await db.query(`INSERT INTO ticket_comments (ticket_id, user_id, comment, created_at)
+    VALUES ('${commentTicketId}', '${submittingUserId}', :comment)`
+  )*/
 })
 
 app.listen(port, () => {
