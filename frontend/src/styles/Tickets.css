@@ -1,3 +1,9 @@
+:root {
+    font-size: 16px;
+    --color-primary: rgb(244, 247, 254);
+    --color-secondary: rgb(48, 60, 115);
+}
+
 .ticket-actions {
     margin-right: 30px;
     margin-bottom: 50px;
@@ -29,4 +35,32 @@
 
 .popup-open .popup {
     display: block;
+}
+
+.popup-open_email {
+    border: 1px solid var(--color-secondary);
+    padding: 0.5rem;
+}
+
+.comment-submit-btn {
+    margin-bottom: 1rem;
+}
+
+.commentPopup-existing-comments {
+    display: flex; /* Make the li container a flexbox */
+}
+  
+.commentData {
+    display: inline-block; /* Set inline-block for textarea */
+    border-right: 2px solid var(--color-secondary);
+    margin-right: 10px;
+    padding-right: 10px;
+}
+.commentData:last-child{
+    border: none;
+}
+
+.close-comment-popup {
+    margin-top: 1rem;
+    text-decoration: underline;
 }

@@ -1,8 +1,8 @@
 .popup-open {
     overflow: hidden;
-  }
+}
   
-  .popup {
+.popup {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -12,8 +12,12 @@
     border: 1px solid #ccc;
     z-index:  
    9999;
-  }
+}
   
-  .popup-open .popup {
-    display: block;
-  }
+.popup-open .popup {
+    display: flex;
+}
+
+.tickets {
+    border: 1px solid black;
+}
