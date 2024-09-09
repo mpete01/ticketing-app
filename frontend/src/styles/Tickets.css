@@ -37,10 +37,24 @@
     display: block;
 }
 
+.solve-solution {
+    border: 1px solid var(--color-secondary);
+    width: 100%;
+}
+
 .popup-open_email {
     border: 1px solid var(--color-secondary);
     padding: 0.5rem;
 }
+
+.assignment-assign-btn {
+    float: left;
+  }
+  
+  .assignment-close-btn {
+    float: right;
+    text-decoration: underline;
+  }
 
 .comment-submit-btn {
     margin-bottom: 1rem;
@@ -48,13 +62,13 @@
 
 .commentPopup-existing-comments {
     display: flex; /* Make the li container a flexbox */
+    border-bottom: 2px solid rgba(48, 60, 115, 0.8);
 }
   
 .commentData {
     display: inline-block; /* Set inline-block for textarea */
-    border-right: 2px solid var(--color-secondary);
-    margin-right: 10px;
-    padding-right: 10px;
+    margin-right: auto;
+    margin-bottom: auto;
 }
 .commentData:last-child{
     border: none;
@@ -62,5 +76,14 @@
 
 .close-comment-popup {
     margin-top: 1rem;
+    text-decoration: underline;
+}
+
+.solve-ticket-submit-btn {
+    float: left;
+}
+
+.solve-ticket-close-btn {
+    float: right;
     text-decoration: underline;
 }

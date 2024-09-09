@@ -3,7 +3,7 @@ import './styles/Home.css';
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //svg icons for the nav bar
-import { faPlus, faRightFromBracket, faUser, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faRightFromBracket, faUser, faClock, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan, faClipboard, faCheck, faComment, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
 import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
@@ -88,6 +88,12 @@ function Homepage() {
 
     }
 
+    //display already solved tickets
+    const solvedTickets = async () => {
+        const solvedTicketsResponse = await axios.get('http://localhost:3000/tickets/solvedTickets')
+        console.log(solvedTicketsResponse.data.message)
+    }
+
     //handle logging out
     const logOut = () => {
         sessionStorage.removeItem("token")
@@ -111,6 +117,10 @@ function Homepage() {
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faPlus} className="navbar-nav-element_icon" />
                     <button onClick={addTicketPopup} className="navbar-nav-element_text">Create ticket </button>
+                </li>
+                <li className="navbar-nav-element">
+                    <FontAwesomeIcon icon={faCircleCheck} className="navbar-nav-element_icon"/>
+                    <button className="navbar-nav-element_text header-content" onClick={solvedTickets}>Solved ickets</button>
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faRightFromBracket} className="navbar-nav-element_icon"/>

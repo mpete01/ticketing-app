@@ -22,7 +22,9 @@ function LoadTicketsByUser() {
     const [exisitngCommentsbyUsers, setExisitngCommentsbyUsers] = useState([]) //corresponding user who created the comment
     const [existingCommentDate, setExistingCommentDate] = useState([]) //corresponding date to the exisitng comment
     const [newComment, setNewComment] = useState("")
-
+    //ticket solving popup
+    const [solvePopup, setSolvePopup] = useState(false)
+    const [ticketSolution ,setTicketSolution] = useState("")
     
     const currentUserEmail = sessionStorage.getItem("user")
     const isUserAdmin = sessionStorage.getItem("is_admin")
@@ -62,7 +64,7 @@ function LoadTicketsByUser() {
     }
     //reassigns the ticket to given user in
     const ticketAssignment = async () => {
-        console.log(`Inner function ticket index: ${ticketToBeAssigned}`)
+        //console.log(`Inner function ticket index: ${ticketToBeAssigned}`)
         const response = await axios.post('http://localhost:3000/tickets/reassignTickets', { ticketToBeAssigned, assignedToUser })
         alert(response.data.result)
     }
@@ -71,6 +73,19 @@ function LoadTicketsByUser() {
         setTicketToBeAssigned("")
         setAssignedToUser("")
         setAssignmentPopup(!assignmentPopup)
+    }
+
+    //ticekt solve popup
+    const solveTicketPopup = async (index) => {
+        setSolvePopup(!solvePopup)
+        const solveTicketId = ticketIndex[index] 
+        const solveTicketResponse = await axios.post('http://localhost:3000/ticekts/solveTickets', { solveTicketId, currentUserEmail })
+    }
+    const solveTicket = () => {
+        console.log("balls")
+    }
+    const closeTicketPopup = () => {
+        setSolvePopup(!solvePopup)
     }
 
     //displays the comment popup for the UI to submit new and view existing comments
@@ -99,7 +114,7 @@ function LoadTicketsByUser() {
                         <p className="tickets-onUser-titles">{ticketIndex[index]}</p>
                         <p className="tickets-onUser-titles">{ticketTitlesByUser[index]}</p>
                         <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea><br />
-                        <button className="ticket-actions solve"><FontAwesomeIcon icon={faCheck}/></button>
+                        <button className="ticket-actions solve" onClick={() => solveTicketPopup(index)}><FontAwesomeIcon icon={faCheck}/></button>
                         <button className="ticket-actions change_owner" onClick={() => assignToUserPopup(index)}><FontAwesomeIcon icon={faClipboard} /></button>
                         <button className="ticket-actions delete" disabled={isDisabled} onClick={() => deleteTicket(index)} ><FontAwesomeIcon icon={faTrashCan} /></button>
                         <button className="ticket-actions comment" onClick={() => openCommentPopup(index)}><FontAwesomeIcon icon={faComment} /></button>
@@ -112,8 +127,8 @@ function LoadTicketsByUser() {
             <p>Assign ticket to a new user</p>
             <input type="email" className="popup-open_email" placeholder="Enter the email address of the person" onChange={(e) => setAssignedToUser(e.target.value)}/> <br />
             <p>Assign Ticket To: {assignedToUser}</p>
-            <button type="submit" onClick={ticketAssignment}>Assign Ticket</button> <br />
-            <button onClick={closeAssignmentPopup}>Close</button>
+            <button type="submit" className="assignment-assign-btn assignment-btn" onClick={ticketAssignment}>Assign Ticket</button>
+            <button onClick={closeAssignmentPopup} className="assignment-close-btn assignment-btn">Close</button>
         </div>}
         {commentPopup && <div className="popup">
             <div className="popup-open"></div>
@@ -128,6 +143,13 @@ function LoadTicketsByUser() {
                     </li>
             )}
             <button onClick={closeCommentPopup} className="close-comment-popup">Close</button>
+        </div>}
+        {solvePopup && <div className="popup">
+            <div className="popup-open"></div>
+            <p>Write down the solution</p>
+            <textarea className="solve-solution" onChange={(e) => setTicketSolution(e.target.value)}></textarea> <br />
+            <button  type="submit" onClick={solveTicket} className="solve-ticket-submit-btn">Solve</button>
+            <button onClick={closeTicketPopup} className="solve-ticket-close-btn">Close</button>
         </div>}
     </>
 }
