@@ -358,6 +358,19 @@ app.post('/tikcets/existingComments', async (req, res) => {
   )*/
 })
 
+
+//SOLVE TICKETS
+app.post('/ticekts/solveTickets', async (req, res) => {
+  console.log("Ticket solve")
+})
+
+
+//GET ALREADY SOLVED TICKETS
+app.get('/tickets/solvedTickets', async (req, res) => {
+  const query = await db.query(`SELECT * FROM ticket_statuses`)
+  console.log(query)
+})
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
