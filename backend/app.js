@@ -146,11 +146,10 @@ app.post('/users/login', async (req, res) => {
 })
 
 
-//UPLOAD NEW TASK TO DATABASE
+//UPLOAD NEW TICKET TO DATABASE
 app.post('/tickets/uploadNewTicket', async (req, res) => {
   const { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time } = req.body
 
-  res.send("balls")
   const loggedInUserid = await db.query(
     `SELECT id FROM users
     WHERE email='${loggedInUser}'`
@@ -165,14 +164,17 @@ app.post('/tickets/uploadNewTicket', async (req, res) => {
 
   //add the ticket to database (not yet assigned to user)
   const addNewTicket = await db.query(
-    `INSERT INTO tickets (title, description, created_at, creator_id, department_id)
-    VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}');`,
+    `INSERT INTO tickets (title, description, created_at, creator_id, department_id, is_solved)
+    VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}', false);`,
     (err) => {
       if(err){
         throw err
       }
     }
   )
+  res.json({
+    result: "Ticket successfully created"    
+  })
 
   //assign newly created ticket to specified user
   const getNewTicketId = await db.query(
@@ -213,7 +215,7 @@ app.post('/tickets/getDepartmentTickets', async (req, res) => {
     SELECT t.id, t.title, t.description
     FROM tickets t
     INNER JOIN departments d ON t.department_id = d.id
-    WHERE d.name = '${currentUserDepartment[0].department}';
+    WHERE d.name = '${currentUserDepartment[0].department}' AND t.is_solved = false;
   `)
   for(let i = 0; i < onDepartment.length; i++){
     titles.push(onDepartment[i].title)
@@ -245,7 +247,7 @@ app.post('/tickets/getTicketsOnUser', async (req, res) => {
     FROM tickets t
     INNER JOIN ticket_assignments ta ON t.id = ta.ticket_id
     INNER JOIN users u ON ta.user_id = u.id
-    WHERE u.id = '${currentUserId[0].id}'
+    WHERE u.id = '${currentUserId[0].id}' AND t.is_solved = false
     ORDER BY t.id ASC`
   )
   for(let i = 0; i < onUser.length; i++){
@@ -273,7 +275,7 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
   let ids = []
 
   const byUser = await db.query(
-    `SELECT id, title, description FROM tickets WHERE creator_id = '${currentUserId[0].id}' ORDER BY id ASC`
+    `SELECT id, title, description FROM tickets WHERE creator_id = '${currentUserId[0].id}' AND is_solved = false ORDER BY id ASC`
   )
   
   for(let i = 0; i < byUser.length; i++){
@@ -290,7 +292,7 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
 })
 
 
-//DELETE TASK FROM DATABASE
+//DELETE TICKET FROM DATABASE
 app.post('/tickets/deleteTicket', async (req, res) => {
   const { delTicketIndex } = req.body
 
@@ -337,7 +339,7 @@ app.post('/tikcets/existingComments', async (req, res) => {
 
   //const submittingUserId = await db.query(`SELECT id FROM users WHERE email = '${currentUserEmail}'`)
 
-  const existingComments = await db.query(`SELECT comment, created_by, created_at FROM ticket_comments WHERE ticket_id = '${commentTicketId}'`)
+  const existingComments = await db.query(`SELECT comment, created_by, created_at FROM ticket_comments WHERE ticket_id = '${commentTicketId}' AND is_solved = false`)
 
   comments = []
   created_by = []
@@ -361,15 +363,61 @@ app.post('/tikcets/existingComments', async (req, res) => {
 
 //SOLVE TICKETS
 app.post('/ticekts/solveTickets', async (req, res) => {
-  console.log("Ticket solve")
+  const { solvedTicketId, currentUserEmail, ticketSolution } = req.body
+  const setIsSolved = await db.query(`UPDATE tickets SET is_solved = true, solution = '${ticketSolution}' WHERE id = '${solvedTicketId}'`, err => {
+    if(err){
+      throw err
+    } else {
+      res.json({
+        result: `Ticket is solved. It was solved by ${currentUserEmail}`
+      })
+    }
+  })
 })
 
 
 //GET ALREADY SOLVED TICKETS
 app.get('/tickets/solvedTickets', async (req, res) => {
-  const query = await db.query(`SELECT * FROM ticket_statuses`)
-  console.log(query)
+  const query = await db.query(`SELECT title, description, solution FROM tickets WHERE is_solved = true`)
+  //console.log(query)
+  res.json({results: query})
 })
+
+
+app.post('/try', async (req, res) => {
+  const { currentUserEmail } = req.body
+  
+  //get current user's user ID and department ID
+  const user_departmentId = await db.query(`
+    SELECT u.id, d.id AS department_id
+    FROM users u
+    INNER JOIN departments d ON u.department = d.name
+    WHERE u.email = '${currentUserEmail}'`
+  )
+
+  
+
+  const query = await db.query(`SELECT title, description, solution FROM tickets 
+    WHERE is_solved = true AND creator_id = '${user_departmentId[0].id}' OR department_id = '${user_departmentId[0].department_id}'`
+  )
+  
+  let title = []
+  let description = []
+  let solution = []
+
+  for(let i = 0; i < query.length; i++){
+    title.push(query[i].title)
+    description.push(query[i].description)
+    solution.push(query[i].solution)
+  }
+
+  res.json({
+    title: title,
+    description: description,
+    solution: solution
+  })
+})
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
