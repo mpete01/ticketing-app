@@ -7,7 +7,8 @@ import { faPlus, faRightFromBracket, faUser, faClock, faCircleCheck } from '@for
 import { faTrashCan, faClipboard, faCheck, faComment, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
 import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
-import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx"; 
+import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx";
+import LoadSolvedTickets from "./components/AlreadySolvedTickets";
 
 function Homepage() {
     const [newTicket, setNewTicket] = useState("")
@@ -15,6 +16,9 @@ function Homepage() {
 
     //new ticket assigned to specific user
     const [newTicketForUser, setNewTicketForUser] = useState("")
+
+    //solved ticekt popup
+    const [solvedTicketsPopup, setSolvedTicketsPopup] = useState(false)
 
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
@@ -90,6 +94,7 @@ function Homepage() {
 
     //display already solved tickets
     const solvedTickets = async () => {
+        setSolvedTicketsPopup(!solvedTicketsPopup)
         const solvedTicketsResponse = await axios.get('http://localhost:3000/tickets/solvedTickets')
         console.log(solvedTicketsResponse.data.message)
     }
@@ -162,6 +167,7 @@ function Homepage() {
                    </div>
                </div>
             )}
+        {solvedTicketsPopup && <LoadSolvedTickets />}
     </>
     )
 }

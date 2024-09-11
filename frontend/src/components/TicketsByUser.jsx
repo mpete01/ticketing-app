@@ -25,6 +25,7 @@ function LoadTicketsByUser() {
     //ticket solving popup
     const [solvePopup, setSolvePopup] = useState(false)
     const [ticketSolution ,setTicketSolution] = useState("")
+    const [solvedTicketId, setSolvedTicketId] = useState()//temporarily store the ID of the ticket that is being solved
     
     const currentUserEmail = sessionStorage.getItem("user")
     const isUserAdmin = sessionStorage.getItem("is_admin")
@@ -78,13 +79,16 @@ function LoadTicketsByUser() {
     //ticekt solve popup
     const solveTicketPopup = async (index) => {
         setSolvePopup(!solvePopup)
-        const solveTicketId = ticketIndex[index] 
-        const solveTicketResponse = await axios.post('http://localhost:3000/ticekts/solveTickets', { solveTicketId, currentUserEmail })
+        setSolvedTicketId(ticketIndex[index])
+        //const solveTicketResponse = await axios.post('http://localhost:3000/ticekts/solveTickets', { solveTicketId, currentUserEmail })
     }
-    const solveTicket = () => {
-        console.log("balls")
+    const solveTicket = async () => {
+        const solution = await axios.post('http://localhost:3000/ticekts/solveTickets', { solvedTicketId, currentUserEmail, ticketSolution })
+        console.log(solution)
+        
     }
     const closeTicketPopup = () => {
+        setSolvedTicketId()
         setSolvePopup(!solvePopup)
     }
 
