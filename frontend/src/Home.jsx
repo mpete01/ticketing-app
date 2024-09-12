@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import './styles/Home.css';
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//svg icons for the nav bar
-import { faPlus, faRightFromBracket, faUser, faClock, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan, faClipboard, faCheck, faComment, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+//svg icons for the nav bar and header
+import { faPlus, faRightFromBracket, faUser, faClock, faCircleCheck, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+//svg icons for the comment interactions
+import { faTrashCan, faClipboard, faCheck, faComment } from '@fortawesome/free-solid-svg-icons';
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
 import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
 import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx";
@@ -13,17 +14,18 @@ import LoadSolvedTickets from "./components/AlreadySolvedTickets";
 function Homepage() {
     const [newTicket, setNewTicket] = useState("")
     const [newTicketTitle, setNewTicketTitle] = useState("")
-
     //new ticket assigned to specific user
     const [newTicketForUser, setNewTicketForUser] = useState("")
-
     //solved ticekt popup
     const [solvedTicketsPopup, setSolvedTicketsPopup] = useState(false)
-
+    //parts of the timer and clock
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
     const [ticketPopup, setTicketPopup] = useState(false)
+
+    const [isDarkmode, setIsDarkmode] = useState()
+    const [icon, setIcon] = useState()
 
     
     //get current time upon reloading and displaying it
@@ -31,7 +33,8 @@ function Homepage() {
         const intervalId = setInterval(() => {
             setTime(new Date())
         }, 1000)
-
+        setIcon(isDarkmode ? <FontAwesomeIcon icon={faSun} /> : <FontAwesomeIcon icon={faMoon} />)
+        setIsDarkmode(localStorage.getItem("is_darkmode"))
         return () => clearInterval(intervalId);
     },[])
     const formattedTime = time.toLocaleTimeString()
@@ -103,12 +106,25 @@ function Homepage() {
     const logOut = () => {
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("user")
+        localStorage.removeItem("is_darkmode")
         location.reload()
     }
 
+    const toggleTheme = () => {
+        if(isDarkmode === true){
+        document.documentElement.style.setProperty('--color-primary', 'rgb(48, 60, 115)')
+        document.documentElement.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
+        }
+        else{
+            document.documentElement.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
+            document.documentElement.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
+        }
+        setIsDarkmode(!isDarkmode)
+        setIcon(isDarkmode ? <FontAwesomeIcon icon={faMoon} /> : <FontAwesomeIcon icon={faSun} />)
+        localStorage.setItem("is_darkmode", !isDarkmode)
+    }
 
-    return(
-    <>
+    return <>
         <nav className="navbar">
             <ul className="navbar-nav">
                 <li className="navbar-nav-element nav-user">
@@ -140,6 +156,7 @@ function Homepage() {
                 <p className="help-icons">Delete ticket -  <FontAwesomeIcon icon={faTrashCan}/></p>                    
                 <p className="help-icons">Add comment - <FontAwesomeIcon icon={faComment}/></p>
             </div>
+            <button className="theme-toggle" onClick={toggleTheme}>{icon}</button>
             <div className="header-logOut">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
         </header>
         <main className="main">
@@ -169,7 +186,6 @@ function Homepage() {
             )}
         {solvedTicketsPopup && <LoadSolvedTickets />}
     </>
-    )
 }
 
 export default Homepage

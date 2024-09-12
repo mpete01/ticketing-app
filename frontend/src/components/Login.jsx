@@ -31,6 +31,11 @@ function Login(){
                 sessionStorage.setItem("user", email)
                 sessionStorage.setItem("token", sentData.data.token)
                 sessionStorage.setItem("is_admin", sentData.data.is_admin)
+                if(localStorage.getItem("is_darkmode") === null){
+                    localStorage.setItem("is_darkmode", false)
+                } else {
+                    localStorage.setItem("is_darkmode", true)
+                }
                 navigate('/')
             }
         } catch(err){

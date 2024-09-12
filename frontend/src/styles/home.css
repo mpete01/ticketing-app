@@ -1,10 +1,13 @@
 :root {
     font-size: 16px;
-    --bg-primary: rgb(244, 247, 254);
-    --bg-secondary: rgb(48, 60, 115);
-    --text-primary: rgb(48, 60, 115);
-    --text-secondary: rgb(244, 247, 254);
+    --color-primary: rgb(244, 247, 254);
+    --color-secondary: rgb(48, 60, 115);
     --transition-speed: 200ms;
+}
+
+.darkmode{
+    --color-primary: rgb(48, 60, 115);
+    --color-secondary: rgb(244, 247, 254);
 }
 
 textarea {
@@ -12,7 +15,7 @@ textarea {
 }
 
 body {
-    color: var(--text-primary);
+    color: var(--color-secondary);
     margin: 0;
     margin-right: 3em;
     padding: 0;
@@ -23,10 +26,10 @@ body {
     width: 5rem;
     height: 100vh;
     position: fixed;
-    background-color: var(--bg-primary);
+    background-color: var(--color-primary);
     transition: width var(--transition-speed) ease;
-    border-right: var(--text-primary);
-    border-right: 1px solid var(--text-primary);
+    border-right: var(--color-secondary);
+    border-right: 1px solid var(--color-secondary);
 }
 
 .navbar-nav {
@@ -49,7 +52,7 @@ body {
     display: flex;
     align-items: center;
     height: 5rem;
-    color: var(--text-primary);
+    color: var(--color-secondary);
     text-decoration: none;
     filter: grayscale(100%) opacity(0.7);
     transition: var(--transition-speed);
@@ -57,8 +60,8 @@ body {
 
 .navbar-nav-element:hover {
     filter: grayscale(0%) opacity(1);
-    background-color: var(--bg-secondary);
-    color: var(--text-secondary);
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
 }
 
 .navbar-nav-element:last-child {
@@ -103,7 +106,7 @@ header {
 
 .header-logOut {
     justify-content: flex-end;
-    border: 1px solid var(--text-primary);
+    border: 1px solid var(--color-secondary);
     border-radius: 25px ;
     padding: 0.8rem;
 }
@@ -185,12 +188,12 @@ body.active-modal {
 .modal-ticketSection_ticket-body {
     width: 100%;
     height: 20vh;
-    border: 1px solid var(--text-primary);
+    border: 1px solid var(--color-secondary);
     border-radius: 5px 5px 5px 5px;
 }
 
 .modal-add-ticket_button {
     margin-top: 10px;
-    color: var(--text-primary);
+    color: var(--color-secondary);
     text-decoration: underline;
 }
