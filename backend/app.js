@@ -377,14 +377,7 @@ app.post('/ticekts/solveTickets', async (req, res) => {
 
 
 //GET ALREADY SOLVED TICKETS
-app.get('/tickets/solvedTickets', async (req, res) => {
-  const query = await db.query(`SELECT title, description, solution FROM tickets WHERE is_solved = true`)
-  //console.log(query)
-  res.json({results: query})
-})
-
-
-app.post('/try', async (req, res) => {
+app.post('/tickets/solvedTickets', async (req, res) => {
   const { currentUserEmail } = req.body
   
   //get current user's user ID and department ID
