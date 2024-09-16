@@ -9,7 +9,8 @@ import { faTrashCan, faClipboard, faCheck, faComment } from '@fortawesome/free-s
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
 import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
 import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx";
-import LoadSolvedTickets from "./components/AlreadySolvedTickets";
+//import LoadSolvedTickets from "./components/AlreadySolvedTickets";
+
 
 function Homepage() {
     const [newTicket, setNewTicket] = useState("")
@@ -18,26 +19,48 @@ function Homepage() {
     const [newTicketForUser, setNewTicketForUser] = useState("")
     //solved ticekt popup
     const [solvedTicketsPopup, setSolvedTicketsPopup] = useState(false)
+    //solved tickets data
+    const [solvedTicektTitles, setSolvedTicketTitles] = useState([])
+    const [solvedTicketDescription, setSolvedTicketDescription] = useState([])
+    const [solvedTicketSolution, setSolvedTicketSolution] = useState([])
     //parts of the timer and clock
     const [time, setTime] = useState(new Date())
     const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
     const [ticketPopup, setTicketPopup] = useState(false)
 
+    const [colorPrimary, setColorPrimary] = useState('')//light mode primary color: rgb(244, 247, 254) - dark mode primary color: rgb(82, 85, 99)
+    const [colorSecondary, setColorSecondary] = useState('')//light mode secondary color: rgb(48, 60, 115) - dark mode secondary color: rgb(217, 221, 230)
     const [isDarkmode, setIsDarkmode] = useState()
-    const [icon, setIcon] = useState()
 
+    const root = document.documentElement
     
     //get current time upon reloading and displaying it
     useEffect(() => {
         const intervalId = setInterval(() => {
             setTime(new Date())
         }, 1000)
-        setIcon(isDarkmode ? <FontAwesomeIcon icon={faSun} /> : <FontAwesomeIcon icon={faMoon} />)
-        setIsDarkmode(localStorage.getItem("is_darkmode"))
         return () => clearInterval(intervalId);
     },[])
     const formattedTime = time.toLocaleTimeString()
+
+
+    //check the user's color theme preference on loading
+    useEffect(()=> {
+        if(localStorage.getItem("is_darkmode") === null || localStorage.getItem("is_darkmode") ===  true){
+            setIsDarkmode(true)
+            /*setColorPrimary('rgb(244, 247, 254)')
+            setColorSecondary('rgb(48, 60, 115)')*/
+            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
+            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
+        } else {
+            setIsDarkmode(false)
+            /*setColorPrimary('#1E201E')
+            setColorSecondary('rgb(244, 247, 254)')*/
+            root.style.setProperty('--color-primary', '#1E201E')
+            root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
+        }
+    }, [])
 
 
     //create a countdown for 10 minutes
@@ -62,13 +85,13 @@ function Homepage() {
     }
     const minutes = Math.floor(timeLeft / 60)
     const seconds = timeLeft % 60
-    
 
     //if countdown is 0 JWT and the user is deleted from sessionStorage and needs to sign in again
     setTimeout(() => {
         if(timeLeft < 1){
             sessionStorage.removeItem("token")
             sessionStorage.removeItem("user")
+            localStorage.setItem("is_darkmode", isDarkmode ? false : true)
             location.reload()
         }
     }, timeLeft)
@@ -96,32 +119,34 @@ function Homepage() {
     }
 
     //display already solved tickets
-    const solvedTickets = async () => {
+    const solvedTickets = () => {
         setSolvedTicketsPopup(!solvedTicketsPopup)
-        const solvedTicketsResponse = await axios.get('http://localhost:3000/tickets/solvedTickets')
-        console.log(solvedTicketsResponse.data.message)
+        const loadData = async () => {
+            const response = await axios.post('http://localhost:3000/tickets/solvedTickets', { loggedInUser })
+            setSolvedTicketTitles(response.data.title)
+            setSolvedTicketDescription(response.data.description)
+            setSolvedTicketSolution(response.data.solution)
+        }
+        loadData()
+    }
+    const closeSolvedPopup = () => {
+        setSolvedTicketsPopup(!solvedTicketsPopup)
     }
 
     //handle logging out
     const logOut = () => {
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("user")
-        localStorage.removeItem("is_darkmode")
+        localStorage.setItem("is_darkmode", isDarkmode ? false : true)
         location.reload()
     }
 
     const toggleTheme = () => {
-        if(isDarkmode === true){
-        document.documentElement.style.setProperty('--color-primary', 'rgb(48, 60, 115)')
-        document.documentElement.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
-        }
-        else{
-            document.documentElement.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
-            document.documentElement.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
-        }
         setIsDarkmode(!isDarkmode)
-        setIcon(isDarkmode ? <FontAwesomeIcon icon={faMoon} /> : <FontAwesomeIcon icon={faSun} />)
-        localStorage.setItem("is_darkmode", !isDarkmode)
+        setColorPrimary(isDarkmode ? '#1E201E' : 'rgb(244, 247, 254)')
+        setColorSecondary(isDarkmode ? 'rgb(244, 247, 254)' : 'rgb(48, 60, 115)')
+        root.style.setProperty('--color-primary', colorPrimary)
+        root.style.setProperty('--color-secondary', colorSecondary)
     }
 
     return <>
@@ -130,6 +155,10 @@ function Homepage() {
                 <li className="navbar-nav-element nav-user">
                     <FontAwesomeIcon icon={faUser} className="navbar-nav-element_icon nav-user_arrow"/>
                     <span className="navbar-nav-element_text nav-user_text" >{loggedInUser}</span>
+                </li>
+                <li className="navbar-nav-element">
+                    <FontAwesomeIcon icon={isDarkmode ? faSun : faMoon} className="navbar-nav-element_icon nav-theme-icon"/>
+                    <span className="navbar-nav-element_text nav-user_text" ><button className="theme-toggle" onClick={toggleTheme}>{isDarkmode ? "Light mode" : "Dark mode"}</button></span>
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faClock} className="navbar-nav-element_icon"/>
@@ -156,7 +185,6 @@ function Homepage() {
                 <p className="help-icons">Delete ticket -  <FontAwesomeIcon icon={faTrashCan}/></p>                    
                 <p className="help-icons">Add comment - <FontAwesomeIcon icon={faComment}/></p>
             </div>
-            <button className="theme-toggle" onClick={toggleTheme}>{icon}</button>
             <div className="header-logOut">You will be logged out in: {isTimerRunning ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds}` : null}</div>
         </header>
         <main className="main">
@@ -184,7 +212,22 @@ function Homepage() {
                    </div>
                </div>
             )}
-        {solvedTicketsPopup && <LoadSolvedTickets />}
+        {solvedTicketsPopup && <div className="popup">
+            <div className="popup-open"></div>
+            <div className="solved-tickets-header">
+                <p>Solved tickets</p>
+                <button className="assignment-close-btn assignment-btn" onClick={closeSolvedPopup}>Close</button>
+            </div>
+            <div>
+                {solvedTicektTitles.map((_, index) =>
+                    <li key={index}>
+                        <p className="tickets-onUser-titles">{solvedTicektTitles[index]}</p>
+                        <p className="tickets-onUser-titles">{solvedTicketDescription[index]}</p>
+                        <p>{solvedTicketSolution[index]}</p>
+                    </li>
+                )}
+            </div>
+        </div>}
     </>
 }
 

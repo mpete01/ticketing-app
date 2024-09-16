@@ -5,16 +5,13 @@
     --transition-speed: 200ms;
 }
 
-.darkmode{
-    --color-primary: rgb(48, 60, 115);
-    --color-secondary: rgb(244, 247, 254);
-}
 
 textarea {
     resize: none;
 }
 
 body {
+    background-color: var(--color-primary);
     color: var(--color-secondary);
     margin: 0;
     margin-right: 3em;

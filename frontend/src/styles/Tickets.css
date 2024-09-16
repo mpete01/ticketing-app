@@ -1,8 +1,17 @@
 :root {
     font-size: 16px;
-    --color-primary: rgb(244, 247, 254);
-    --color-secondary: rgb(48, 60, 115);
     line-break: auto;
+}
+
+.ticket-titles {
+    text-decoration: underline;
+    margin-bottom: 5px;
+}
+
+.ticket-textarea {
+    color: var(--color-secondary);
+    background: none;
+    padding: 5px;
 }
 
 .ticket-actions {
@@ -23,7 +32,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
+    background-color: var(--color-primary);
     padding: 20px;
     border: 1px solid #ccc;
     z-index:  

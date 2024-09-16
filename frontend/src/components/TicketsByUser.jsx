@@ -115,9 +115,8 @@ function LoadTicketsByUser() {
             <div className="tickets">
                 {ticketsByUser.map((ticket, index) =>
                     <li key={index}>
-                        <p className="tickets-onUser-titles">{ticketIndex[index]}</p>
-                        <p className="tickets-onUser-titles">{ticketTitlesByUser[index]}</p>
-                        <textarea name="ticket" id="ticket"  className="ticket" value={ticket}></textarea><br />
+                        <p className="tickets-onUser-titles ticket-titles">{ticketTitlesByUser[index]}</p>
+                        <textarea name="ticket" id="ticket"  className="ticket-textarea" value={ticket}></textarea><br />
                         <button className="ticket-actions solve" onClick={() => solveTicketPopup(index)}><FontAwesomeIcon icon={faCheck}/></button>
                         <button className="ticket-actions change_owner" onClick={() => assignToUserPopup(index)}><FontAwesomeIcon icon={faClipboard} /></button>
                         <button className="ticket-actions delete" disabled={isDisabled} onClick={() => deleteTicket(index)} ><FontAwesomeIcon icon={faTrashCan} /></button>

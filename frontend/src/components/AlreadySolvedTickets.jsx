@@ -1,33 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function LoadSolvedTickets(){
-    const [ticektTitles, setTicketTitles] = useState([])
-    const [ticketDescription, setTicketDescription] = useState([])
-    const [ticketSolution, setTicketSolution] = useState([])
+    const [solvedTicektTitles, setSolvedTicketTitles] = useState([])
+    const [solvedTicketDescription, setSolvedTicketDescription] = useState([])
+    const [solvedTicketSolution, setSolvedTicketSolution] = useState([])
 
     const currentUserEmail = sessionStorage.getItem("user")
 
-    const getStuff = async () => {
+    useEffect(async () => {
+        const response = await axios.post('http://localhost:3000/tickets/solvedTickets', { currentUserEmail })
+        setSolvedTicketTitles(response.data.title)
+        setSolvedTicketDescription(response.data.description)
+        setSolvedTicketSolution(response.data.solution)
+    }, [])
+    
+    /*const getStuff = async () => {
         const response = await axios.post('http://localhost:3000/tickets/solvedTickets', { currentUserEmail })
         setTicketTitles(response.data.title)
         setTicketDescription(response.data.description)
         setTicketSolution(response.data.solution)
-    }
+    }*/
+   const close = () => {
+        console.log("close")
+   }
 
     return <>
         <div className="popup">
             <div className="popup-open"></div>
             <div className="solved-tickets-header">
                 <p>Solved tickets</p>
-                <button className="assignment-close-btn assignment-btn" onClick={getStuff}>Close</button>
+                <button className="assignment-close-btn assignment-btn" onClick={close}>Close</button>
             </div>
             <div>
-                {ticektTitles.map((_, index) =>
+                {solvedTicektTitles.map((_, index) =>
                     <li key={index}>
-                        <p className="tickets-onUser-titles">{ticektTitles[index]}</p>
-                        <p className="tickets-onUser-titles">{ticketDescription[index]}</p>
-                        <p>{ticketSolution[index]}</p>
+                        <p className="tickets-onUser-titles">{solvedTicektTitles[index]}</p>
+                        <p className="tickets-onUser-titles">{solvedTicketDescription[index]}</p>
+                        <p>{solvedTicketSolution[index]}</p>
                     </li>
                 )}
             </div>
