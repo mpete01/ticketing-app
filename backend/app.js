@@ -339,7 +339,7 @@ app.post('/tikcets/existingComments', async (req, res) => {
 
   //const submittingUserId = await db.query(`SELECT id FROM users WHERE email = '${currentUserEmail}'`)
 
-  const existingComments = await db.query(`SELECT comment, created_by, created_at FROM ticket_comments WHERE ticket_id = '${commentTicketId}' AND is_solved = false`)
+  const existingComments = await db.query(`SELECT comment, created_by, created_at FROM ticket_comments WHERE ticket_id = '${commentTicketId}'`)// AND is_solved = false`)
 
   comments = []
   created_by = []
@@ -378,14 +378,14 @@ app.post('/ticekts/solveTickets', async (req, res) => {
 
 //GET ALREADY SOLVED TICKETS
 app.post('/tickets/solvedTickets', async (req, res) => {
-  const { currentUserEmail } = req.body
+  const { loggedInUser } = req.body
   
   //get current user's user ID and department ID
   const user_departmentId = await db.query(`
     SELECT u.id, d.id AS department_id
     FROM users u
     INNER JOIN departments d ON u.department = d.name
-    WHERE u.email = '${currentUserEmail}'`
+    WHERE u.email = '${loggedInUser}'`
   )
 
   
