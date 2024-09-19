@@ -207,17 +207,20 @@ app.post('/tickets/getDepartmentTickets', async (req, res) => {
     `SELECT department FROM users WHERE email = '${currentUserEmail}'`
   )
 
+  let ids = []
   let titles = []
   let descriptions = []
   let department = []
   let created_at = []
+
   const onDepartment = await db.query(`
-    SELECT t.id, t.title, t.description
+    SELECT t.id, t.title, t.description, t.id
     FROM tickets t
     INNER JOIN departments d ON t.department_id = d.id
     WHERE d.name = '${currentUserDepartment[0].department}' AND t.is_solved = false;
   `)
   for(let i = 0; i < onDepartment.length; i++){
+    ids.push(onDepartment[i].id)
     titles.push(onDepartment[i].title)
     descriptions.push(onDepartment[i].description)
     department.push(onDepartment[i].department_name)
@@ -225,6 +228,7 @@ app.post('/tickets/getDepartmentTickets', async (req, res) => {
   }
 
   res.send({
+    "ids": ids,
     "title": titles,
     "tickets": descriptions,
     "department": department,
@@ -240,21 +244,26 @@ app.post('/tickets/getTicketsOnUser', async (req, res) => {
   const currentUserId = await db.query(
     `SELECT id FROM users WHERE email = '${currentUserEmail}'`
   )
+
   let titles = []
   let descriptions = []
+  let ids = []
   const onUser = await db.query(
-    `SELECT t.id, t.title, t.description
+    `SELECT t.id, t.title, t.description, t.id
     FROM tickets t
     INNER JOIN ticket_assignments ta ON t.id = ta.ticket_id
     INNER JOIN users u ON ta.user_id = u.id
     WHERE u.id = '${currentUserId[0].id}' AND t.is_solved = false
     ORDER BY t.id ASC`
   )
+
   for(let i = 0; i < onUser.length; i++){
+    ids.push(onUser[i].id)
     titles.push(onUser[i].title)
     descriptions.push(onUser[i].description)
   }
   res.send({
+    "ids": ids,
     "title": titles,
     "tickets": descriptions
   })
