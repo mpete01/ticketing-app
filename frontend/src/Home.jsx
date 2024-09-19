@@ -32,6 +32,8 @@ function Homepage() {
     const [colorPrimary, setColorPrimary] = useState('')//light mode primary color: rgb(244, 247, 254) - dark mode primary color: rgb(82, 85, 99)
     const [colorSecondary, setColorSecondary] = useState('')//light mode secondary color: rgb(48, 60, 115) - dark mode secondary color: rgb(217, 221, 230)
     const [isDarkmode, setIsDarkmode] = useState()
+    const [icon, setIcon] = useState()
+    const [theme, setTheme] = useState('')
 
     const root = document.documentElement
     
@@ -47,16 +49,12 @@ function Homepage() {
 
     //check the user's color theme preference on loading
     useEffect(()=> {
-        if(localStorage.getItem("is_darkmode") === null || localStorage.getItem("is_darkmode") ===  true){
+        if(localStorage.getItem("is_darkmode") !== false){
             setIsDarkmode(true)
-            /*setColorPrimary('rgb(244, 247, 254)')
-            setColorSecondary('rgb(48, 60, 115)')*/
             root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
             root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
         } else {
             setIsDarkmode(false)
-            /*setColorPrimary('#1E201E')
-            setColorSecondary('rgb(244, 247, 254)')*/
             root.style.setProperty('--color-primary', '#1E201E')
             root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
         }
@@ -148,7 +146,7 @@ function Homepage() {
         root.style.setProperty('--color-primary', colorPrimary)
         root.style.setProperty('--color-secondary', colorSecondary)
     }
-
+//<span className="navbar-nav-element_text nav-user_text" ></span>
     return <>
         <nav className="navbar">
             <ul className="navbar-nav">
@@ -158,7 +156,7 @@ function Homepage() {
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={isDarkmode ? faSun : faMoon} className="navbar-nav-element_icon nav-theme-icon"/>
-                    <span className="navbar-nav-element_text nav-user_text" ><button className="theme-toggle" onClick={toggleTheme}>{isDarkmode ? "Light mode" : "Dark mode"}</button></span>
+                    <button className="navbar-nav-element_text nav-user_text theme-toggle" onClick={toggleTheme}>{isDarkmode ? "Light mode" : "Dark mode"}</button>
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faClock} className="navbar-nav-element_icon"/>
@@ -215,18 +213,28 @@ function Homepage() {
         {solvedTicketsPopup && <div className="popup">
             <div className="popup-open"></div>
             <div className="solved-tickets-header">
-                <p>Solved tickets</p>
+                <p className="solved-tickets-title">Solved tickets</p>
                 <button className="assignment-close-btn assignment-btn" onClick={closeSolvedPopup}>Close</button>
             </div>
-            <div>
-                {solvedTicektTitles.map((_, index) =>
-                    <li key={index}>
-                        <p className="tickets-onUser-titles">{solvedTicektTitles[index]}</p>
-                        <p className="tickets-onUser-titles">{solvedTicketDescription[index]}</p>
-                        <p>{solvedTicketSolution[index]}</p>
-                    </li>
-                )}
-            </div>
+            <table className="solved-tickets-table">
+                <thead className="solved-tickets-thead">
+                    <tr className="thead-title-row">
+                        <th className="title-row_titles title-row">Ticket Titles</th>
+                        <th className="title-row_descriptions title-row">Ticket Descriptions</th>
+                        <th className="title-row_solution title-row">Ticket Solution</th>
+                    </tr>
+                </thead>
+                <tbody className="solved-tickets-tbody">
+                    {solvedTicektTitles.map((_, index) =>
+                    <tr key={index} className="solved-tickets_tr">
+                        <td className="tickets-onUser-titles solved-tickets_td">{solvedTicektTitles[index]}</td>
+                        <td className="tickets-onUser-description solved-tickets_td">{solvedTicketDescription[index]}</td>
+                        <td className="tickets-onUser-solution solved-tickets_td">{solvedTicketSolution[index]}</td>
+                    </tr>
+                    )}
+                </tbody>
+            </table>
+
         </div>}
     </>
 }

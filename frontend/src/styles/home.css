@@ -91,6 +91,15 @@ header {
     margin-bottom: 2rem;
 }
 
+.solved-tickets-header {
+    display: flex;
+    justify-content: space-between; 
+}
+  
+.solved-tickets-title {
+    margin: 0;
+}
+
 .help {
     display: flex;
     margin-left: 5rem;
@@ -193,4 +202,14 @@ body.active-modal {
     margin-top: 10px;
     color: var(--color-secondary);
     text-decoration: underline;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    flex: 1;
+    padding: 10px;
 }

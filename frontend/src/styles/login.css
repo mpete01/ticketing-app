@@ -3,7 +3,7 @@
 }
 
 body {
-    background-color: var(--bg-primary);
+    background-color: var(--color-primary);
 }
 
 .login-form {
@@ -22,18 +22,19 @@ body {
 .login-form-title {
     margin-top: 2vh;
     margin-bottom: 2vh;
-    font-size: 2.5vh;
+    font-size: 1.5rem;
     color: var(--color-secondary);
 }
 
 input {
+    min-width: 10rem;
     width: 12vw;
     height: 2vh;
     border: 1px solid var(--color-secondary);
     border-radius: 5px 5px 5px 5px;
     padding: 1em;
     background-color: var(--color-primary);
-    color: black;
+    color: var(--color-secondary);
 }
 
 .password-input-field {
@@ -58,10 +59,10 @@ input {
     height: 2.5rem;
     min-width: 15rem;
     min-height: 2.5rem;
-    color: white;
+    color: var(--color-primary);
     background-color: var(--color-secondary);
     cursor: pointer;
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--color-secondary);
     border-radius: 20px 20px 20px 20px;
     margin-top: 3vh;
     font-size: 1.5rem;

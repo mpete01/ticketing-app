@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import '../styles/register.css';
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -13,10 +13,19 @@ function Register(){
     const [failedPopup, setFailedPopup] = useState(false)
     const [alreadyRegistered, setAlreadyRegisterd] = useState(false)
 
+    useEffect(()=> {
+        if(localStorage.getItem("is_darkmode") === null || localStorage.getItem("is_darkmode") ===  true){
+            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
+            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
+        } else {
+            root.style.setProperty('--color-primary', '#1E201E')
+            root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
+        }
+    }, [])
+
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault()

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import '../styles/login.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -9,6 +9,19 @@ function Login(){
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate()
+
+    const root = document.documentElement
+
+    useEffect(()=> {
+        if(localStorage.getItem("is_darkmode") !== false){//null || localStorage.getItem("is_darkmode") ===  true){
+            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
+            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
+        } else {
+            root.style.setProperty('--color-primary', '#1E201E')
+            root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
+        }
+    }, [])
+
 
     const toggleInputType = () => {
         setInputType(inputType === "password" ? "text" : "password")
