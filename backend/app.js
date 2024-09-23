@@ -98,7 +98,7 @@ app.post('/users/login', async (req, res) => {
 
   //Querying the user based on the provided email
   let query = await db.query(
-    `SELECT id, username, email, password, is_admin FROM users WHERE email = '${email}'`,
+    `SELECT id, username, email, password, department, is_admin FROM users WHERE email = '${email}'`,
     (err) => {
       if(err){
         throw err
@@ -133,6 +133,7 @@ app.post('/users/login', async (req, res) => {
           auth: false,
           token: token,
           is_admin: is_admin,
+          department: query[0].department,
           result: query[0]
         })
       }
