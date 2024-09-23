@@ -177,8 +177,8 @@ body.active-modal {
     left: 50%;
     transform: translate(-50%, -50%);
     line-height: 1.4;
-    background: #f1f1f1;
-    color: black;
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-secondary);
     padding: 14px 28px;
     border-radius: 3px;
     /*max-width: 600px;*/
@@ -193,6 +193,7 @@ body.active-modal {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: var(--color-secondary);
 }
 
 .modal-tiketSection_department-and-assignment > input {
@@ -215,6 +216,8 @@ body.active-modal {
     width: 100%;
     height: 20vh;
     border: 1px solid var(--color-secondary);
+    background-color: var(--color-primary);
+    color: var(--color-secondary);
     border-radius: 5px 5px 5px 5px;
 }
 

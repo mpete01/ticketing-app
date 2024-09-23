@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import '../styles/register.css';
-import { Link } from "react-router-dom";
+import { Link,  useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Register(){
@@ -45,14 +45,20 @@ function Register(){
                     alert("Choose your department")
                 } else{
                     let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password, department })
-                    console.log({ name, email, password, department })
+                    console.log(sentData)
+                    if(sentData.data === "User already registered"){
+                        alert("User already registered")
+                    } else {
+                        alert("You have been registered successfully. Please Log in")
+                    }
                 }
 
-                if(sentData.data === "User already registered"){
+                /*if(sentData.data === "User already registered"){
                     setAlreadyRegisterd(!alreadyRegistered)
+                    alert("User already registered")
                 } else {
                     setPopup(!popup)
-                }
+                }*/
             } catch(err){
                 console.log(err)
             }
@@ -83,7 +89,8 @@ function Register(){
     } else {
         document.body.classList.remove('active-modal')
     }
-    //<button className="close-modal" onClick={togglePopup}>Close</button>
+
+
     return <>
         <div className="register-container">
             <form className="register-form">

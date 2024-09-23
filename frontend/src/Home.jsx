@@ -102,6 +102,9 @@ function Homepage() {
     //add new task to UI and to the database too
     const addTicketPopup = () => {
         setTicketPopup(!ticketPopup)
+        setNewTicketForUser("")
+        setNewTicketTitle("")
+        setNewTicket("")
     }
     const addTicket = async () => {
         if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){ /**/
@@ -139,6 +142,7 @@ function Homepage() {
         location.reload()
     }
 
+    //change theme between light and dark mode
     const toggleTheme = () => {
         setIsDarkmode(!isDarkmode)
         setColorPrimary(isDarkmode ? '#1E201E' : 'rgb(244, 247, 254)')
