@@ -13,13 +13,17 @@ function Register(){
     const [failedPopup, setFailedPopup] = useState(false)
     const [alreadyRegistered, setAlreadyRegisterd] = useState(false)
 
+    //check the user's color theme preference on loading
     useEffect(()=> {
-        if(localStorage.getItem("is_darkmode") === null || localStorage.getItem("is_darkmode") ===  true){
-            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
-            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
-        } else {
+        if(localStorage.getItem("is_darkmode") === null){
+            localStorage.setItem("is_darkmode", 'false')
+        }
+        else if(localStorage.getItem("is_darkmode") === 'true'){
             root.style.setProperty('--color-primary', '#1E201E')
             root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
+        } else if(localStorage.getItem("is_darkmode") === 'false'){
+            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
+            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
         }
     }, [])
 
@@ -91,6 +95,10 @@ function Register(){
                     <option className="register-form-department_option" value="IT" onClick={(e) => setDepartment(e.target.value)}>IT</option>
                     <option className="register-form-department_option" value="Maintanence" onClick={(e) => setDepartment(e.target.value)}>Maintanence</option>
                     <option className="register-form-department_option" value="HR" onClick={(e) => setDepartment(e.target.value)}>HR</option>
+                    <option className="register-form-department_option" value="Marketing" onClick={(e) => setDepartment(e.target.value)}>Marketing</option>
+                    <option className="register-form-department_option" value="Finance" onClick={(e) => setDepartment(e.target.value)}>Finance</option>
+                    <option className="register-form-department_option" value="Open Office" onClick={(e) => setDepartment(e.target.value)}>Open Office</option>
+                    option
                 </select>
                 <div className="password-input-field">
                     <input type={showPassword ? "text" : "password"} value={password.trim()} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />

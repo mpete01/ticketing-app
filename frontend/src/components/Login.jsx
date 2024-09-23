@@ -12,14 +12,17 @@ function Login(){
 
     const root = document.documentElement
 
-    //change primray and secondary color in the :root element based on user prefrence
+    //check the user's color theme preference on loading
     useEffect(()=> {
-        if(localStorage.getItem("is_darkmode") !== false){//null || localStorage.getItem("is_darkmode") ===  true){
-            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
-            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
-        } else {
+        if(localStorage.getItem("is_darkmode") === null){
+            localStorage.setItem("is_darkmode", 'false')
+        }
+        else if(localStorage.getItem("is_darkmode") === 'true'){
             root.style.setProperty('--color-primary', '#1E201E')
             root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
+        } else if(localStorage.getItem("is_darkmode") === 'false'){
+            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
+            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
         }
     }, [])
 

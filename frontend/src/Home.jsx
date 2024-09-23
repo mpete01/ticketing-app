@@ -9,7 +9,6 @@ import { faTrashCan, faClipboard, faCheck, faComment } from '@fortawesome/free-s
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
 import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
 import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx";
-//import LoadSolvedTickets from "./components/AlreadySolvedTickets";
 
 
 function Homepage() {
@@ -32,8 +31,6 @@ function Homepage() {
     const [colorPrimary, setColorPrimary] = useState('')//light mode primary color: rgb(244, 247, 254) - dark mode primary color: rgb(82, 85, 99)
     const [colorSecondary, setColorSecondary] = useState('')//light mode secondary color: rgb(48, 60, 115) - dark mode secondary color: rgb(217, 221, 230)
     const [isDarkmode, setIsDarkmode] = useState()
-    const [icon, setIcon] = useState()
-    const [theme, setTheme] = useState('')
 
     const root = document.documentElement
     
@@ -49,16 +46,19 @@ function Homepage() {
 
     //check the user's color theme preference on loading
     useEffect(()=> {
-        if(localStorage.getItem("is_darkmode") !== false){
+        if(localStorage.getItem("is_darkmode") === null){
+            localStorage.setItem("is_darkmode", 'false')
+        }
+        else if(localStorage.getItem("is_darkmode") === 'true'){
             setIsDarkmode(true)
-            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
-            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
-        } else {
-            setIsDarkmode(false)
             root.style.setProperty('--color-primary', '#1E201E')
             root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
+        } else if(localStorage.getItem("is_darkmode") === 'false'){
+            setIsDarkmode(false)
+            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
+            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
         }
-    }, [])
+    }, [2])
 
 
     //create a countdown for 10 minutes
@@ -135,7 +135,7 @@ function Homepage() {
     const logOut = () => {
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("user")
-        localStorage.setItem("is_darkmode", isDarkmode ? false : true)
+        localStorage.setItem("is_darkmode", isDarkmode ? 'true' : 'false')
         location.reload()
     }
 
@@ -147,7 +147,7 @@ function Homepage() {
         root.style.setProperty('--color-secondary', colorSecondary)
     }
 
-    
+
     return <>
         <nav className="navbar">
             <ul className="navbar-nav">
