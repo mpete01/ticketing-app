@@ -146,7 +146,8 @@ function Homepage() {
         root.style.setProperty('--color-primary', colorPrimary)
         root.style.setProperty('--color-secondary', colorSecondary)
     }
-//<span className="navbar-nav-element_text nav-user_text" ></span>
+
+    
     return <>
         <nav className="navbar">
             <ul className="navbar-nav">

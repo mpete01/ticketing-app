@@ -28,6 +28,7 @@ function LoadTicketsOnUserDepartment() {
        
        const currentUserEmail = sessionStorage.getItem("user")
        const isUserAdmin = sessionStorage.getItem("is_admin")
+       const currentDepartment = sessionStorage.getItem("department")
    
    
        useEffect(() => {
@@ -109,7 +110,7 @@ function LoadTicketsOnUserDepartment() {
    
        return<>
            <section className="main-ticketsOnUser">
-               <p>On: {currentUserEmail}</p>
+               <p>On Department: {currentDepartment}</p>
                <p>--------------------------------</p>
                <div className="tickets">
                    {ticketsOnUserDepartment.map((ticket, index) =>

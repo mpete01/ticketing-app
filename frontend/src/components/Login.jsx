@@ -12,6 +12,7 @@ function Login(){
 
     const root = document.documentElement
 
+    //change primray and secondary color in the :root element based on user prefrence
     useEffect(()=> {
         if(localStorage.getItem("is_darkmode") !== false){//null || localStorage.getItem("is_darkmode") ===  true){
             root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
@@ -44,6 +45,7 @@ function Login(){
                 sessionStorage.setItem("user", email)
                 sessionStorage.setItem("token", sentData.data.token)
                 sessionStorage.setItem("is_admin", sentData.data.is_admin)
+                sessionStorage.setItem("department", sentData.data.department)
                 if(localStorage.getItem("is_darkmode") === null){
                     localStorage.setItem("is_darkmode", false)
                 } else {
