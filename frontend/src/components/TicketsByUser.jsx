@@ -3,6 +3,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan, faClipboard, faCheck, faComment } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Tickets.css';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function LoadTicketsByUser() {
     //store the tickets' title, body and index that is created by the current user
@@ -54,7 +56,10 @@ function LoadTicketsByUser() {
     const deleteTicket = async (index) => {
         const delTicketIndex = ticketIndex[index]
         const delTask = await axios.post("http://localhost:3000/tickets/deleteTicket", { delTicketIndex })
-        window.location.reload();
+        toast.success("Ticket successfully deleted")
+        setTimeout(() => {
+            location.reload()
+        }, 2000);
     }
 
     //displays the popup for the UI where a ticket can be reassigned to other users
@@ -64,7 +69,6 @@ function LoadTicketsByUser() {
     }
     //reassigns the ticket to given user in
     const ticketAssignment = async () => {
-        //console.log(`Inner function ticket index: ${ticketToBeAssigned}`)
         const response = await axios.post('http://localhost:3000/tickets/reassignTickets', { ticketToBeAssigned, assignedToUser })
         alert(response.data.result)
     }
@@ -133,7 +137,7 @@ function LoadTicketsByUser() {
             <button onClick={closeAssignmentPopup} className="assignment-close-btn assignment-btn">Close</button>
         </div>}
         {commentPopup && <div className="popup">
-            <div className="popup-open"></div>
+            <div className="popup-open">
             <p>Create a new comment</p>
             <textarea className="popup-open_email" placeholder="Enter the comment" onChange={(e) => setNewComment(e.target.value)}/> <br />
             <button type="submit" className="comment-submit-btn">Add comment</button> <br />
@@ -145,6 +149,7 @@ function LoadTicketsByUser() {
                     </li>
             )}
             <button onClick={closeCommentPopup} className="close-comment-popup">Close</button>
+            </div>
         </div>}
         {solvePopup && <div className="popup">
             <div className="popup-open"></div>
@@ -153,6 +158,7 @@ function LoadTicketsByUser() {
             <button  type="submit" onClick={solveTicket} className="solve-ticket-submit-btn">Solve</button>
             <button onClick={closeTicketPopup} className="solve-ticket-close-btn">Close</button>
         </div>}
+        <ToastContainer />
     </>
 }
 

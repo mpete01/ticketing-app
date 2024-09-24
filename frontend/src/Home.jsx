@@ -9,6 +9,8 @@ import { faTrashCan, faClipboard, faCheck, faComment } from '@fortawesome/free-s
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
 import LoadTicketsOnUser from "./components/TicketsOnUser.jsx";
 import LoadTicketsOnUserDepartment from "./components/TicketsOnUserDepartment.jsx";
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 function Homepage() {
@@ -106,15 +108,39 @@ function Homepage() {
         setNewTicketTitle("")
         setNewTicket("")
     }
-    const addTicket = async () => {
-        if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){ /**/
-            const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
-            console.log(sentTicket)
+    const closeTicketPopup = () => {
+        if(newTicketForUser === "" && newTicketTitle === "" && newTicket === ""){
             setNewTicketForUser("")
             setNewTicketTitle("")
             setNewTicket("")
             setTicketPopup(!ticketPopup)
-            window.location.reload()
+        } else {
+            setNewTicketForUser("")
+            setNewTicketTitle("")
+            setNewTicket("")
+            location.reload()
+        }
+    }
+    const addTicket = async () => {
+        if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){ /**/
+            const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
+            if(sentTicket.data.result === "Ticket successfully created"){
+                toast.success("Ticket successfully created")
+                setTimeout(() => {
+                    setNewTicketForUser("")
+                    setNewTicketTitle("")
+                    setNewTicket("")
+                    setTicketPopup(!ticketPopup)
+                    window.location.reload()
+                }, 5000);
+            }
+            else {
+                console.log(sentTicket.data.error)
+                toast.error(sentTicket.data.errorMsg)
+            }
+        }
+        else {
+            toast.error("Please fill out every field")
         }
 
     }
@@ -201,7 +227,7 @@ function Homepage() {
                    <div className="modal-content">
                        <header className="modal-content_header">
                             <p className="modal-content_header-user">{loggedInUser}</p>
-                            <button onClick={addTicketPopup} className="modal-content_header-close">X</button>
+                            <button onClick={closeTicketPopup} className="modal-content_header-close">X</button>
                         </header>
                         <section className="modal-ticketSection">
                             <div className="modal-tiketSection_department-and-assignment">
@@ -241,6 +267,7 @@ function Homepage() {
             </table>
 
         </div>}
+        <ToastContainer />
     </>
 }
 

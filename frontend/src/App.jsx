@@ -3,48 +3,34 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './styles/App.css'
 import axios from 'axios'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, redirect, useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [query, setQuery] = useState([])
-  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:3000/api/data', { name, email, password });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
+  const handleSubmit = () => {
+    if(email === "email" && password === "password"){
+      toast.success("Login Successful. Redirecting")
+      setTimeout(() => {
+        navigate('/')
+      }, 5000);
+    } else {
+      toast.error("Wrong email or pssword")
+      
     }
   };
 
-
-  const redirectTo = () => {
-    navigate('/')
-  }
-
   return (
     <>
-       <div className="password-toggle">
-        <input
-          type={showPassword ? "text" : "password"}
-        />
-        <button type="button" onClick={togglePasswordVisibility}>balls
-          {showPassword ? <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>}
-        </button>
-      </div>
-      <p>-------------------------------------------</p>
-      <button onClick={redirectTo}>Redirect</button>
+      <input type="email" placeholder='email' onChange={(e) => setEmail(e.target.value)}/>
+      <input type="password" placeholder='password' onChange={(e) => setPassword(e.target.value)}/>
+      <button onClick={handleSubmit}>Login</button>
+      <ToastContainer />
     </>
   )
 }

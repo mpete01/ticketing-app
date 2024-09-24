@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import '../styles/login.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 function Login(){
@@ -34,17 +36,16 @@ function Login(){
     const submitLogin = async (e) => {
         e.preventDefault()
         if(!email || !password) {
-            alert("Please fill out all the fields")
+            toast.error("Please fill out all the fields")
         }
         try{
             let sentData = await axios.post('http://localhost:3000/users/login', { email, password })
             //user doesn't exist or credentials are incorrect (no jwt is awarded)
-            if(sentData.data.token === undefined){
-                alert("No user found. Password or email is incorrect")
+            if(sentData.data.result === "No user found"){
+                toast.error("No user found. Password or email is incorrect")
             }
             //user exists and got jwt from server then user is redirected to home page ("/")
             else {
-                console.log(sentData.data)
                 sessionStorage.setItem("user", email)
                 sessionStorage.setItem("token", sentData.data.token)
                 sessionStorage.setItem("is_admin", sentData.data.is_admin)
@@ -54,7 +55,13 @@ function Login(){
                 } else {
                     localStorage.setItem("is_darkmode", true)
                 }
-                navigate('/')
+                toast.success("Login successful. Redirecting to the home page. Just a few seconds", {
+                    hideProgressBar:true
+                    });
+                setTimeout(() => {
+                    navigate('/')
+                }, 3000);
+                
             }
         } catch(err){
             alert(err)
@@ -70,7 +77,20 @@ function Login(){
             </div>
             <button type="submit" className="login-form-submitButton" onClick={submitLogin}>Login</button>
             <p className="register">Don't have an account? <Link to="/Register" style={{ textDecoration: 'underline' }}>Register</Link></p>
-        </div>    
+        </div>
+        <ToastContainer 
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable={false}
+            pauseOnHover={false}
+            theme= "colored"
+            transition: Bounce
+        />
     </>
 }
 export default Login
