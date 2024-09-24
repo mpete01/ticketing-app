@@ -151,52 +151,60 @@ app.post('/users/login', async (req, res) => {
 app.post('/tickets/uploadNewTicket', async (req, res) => {
   const { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time } = req.body
 
-  const loggedInUserid = await db.query(
-    `SELECT id FROM users
-    WHERE email='${loggedInUser}'`
-  )
-  const assignedToUserDepartment = await db.query(
-    `SELECT department FROM users WHERE email = '${newTicketForUser}'`
-  )
+  try {
+    const loggedInUserid = await db.query(
+      `SELECT id FROM users
+      WHERE email='${loggedInUser}'`
+    )
+    const assignedToUserDepartment = await db.query(
+      `SELECT department FROM users WHERE email = '${newTicketForUser}'`
+    )
 
-  const departmentId = await db.query(
-    `SELECT id from departments WHERE name = '${assignedToUserDepartment[0].department}'`
-  )
+    const departmentId = await db.query(
+      `SELECT id from departments WHERE name = '${assignedToUserDepartment[0].department}'`
+    )
 
-  //add the ticket to database (not yet assigned to user)
-  const addNewTicket = await db.query(
-    `INSERT INTO tickets (title, description, created_at, creator_id, department_id, is_solved)
-    VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}', false);`,
-    (err) => {
-      if(err){
-        throw err
+    //add the ticket to database (not yet assigned to user)
+    const addNewTicket = await db.query(
+      `INSERT INTO tickets (title, description, created_at, creator_id, department_id, is_solved)
+      VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}', false);`,
+      (err) => {
+        if(err){
+          throw err
+        }
       }
-    }
-  )
-  res.json({
-    result: "Ticket successfully created"    
-  })
+    )
 
-  //assign newly created ticket to specified user
-  const getNewTicketId = await db.query(
-    `SELECT id FROM tickets
-    WHERE created_at = '${time}'`
-  )
+    //assign newly created ticket to specified user
+    const getNewTicketId = await db.query(
+      `SELECT id FROM tickets
+      WHERE created_at = '${time}'`
+    )
 
-  //assign ticekt to the user's department the ticket is assigned to
-  const assignedToUsersDepartment = await db.query(`
-    SELECT id FROM users WHERE email = '${newTicketForUser}'
-  `)
+    //assign ticekt to the user's department the ticket is assigned to
+    const assignedToUsersDepartment = await db.query(`
+      SELECT id FROM users WHERE email = '${newTicketForUser}'
+    `)
 
-  const assignNewTicket = await db.query(
-    `INSERT INTO ticket_assignments (ticket_id, user_id)
-    VALUES ('${getNewTicketId[0].id}', '${assignedToUsersDepartment[0].id}');`,
-    (err) => {
-      if(err){
-        throw err
+    const assignNewTicket = await db.query(
+      `INSERT INTO ticket_assignments (ticket_id, user_id)
+      VALUES ('${getNewTicketId[0].id}', '${assignedToUsersDepartment[0].id}');`,
+      (err) => {
+        if(err){
+          throw err
+        }
       }
-    }
-  )
+    )
+    res.json({
+      result: "Ticket successfully created"    
+    })
+  } catch (err) {
+    console.error("Error: " + err)
+    res.json({
+      error: err,
+      errorMsg: "An error occoured"
+    })
+  }
 })
 
 
@@ -398,10 +406,9 @@ app.post('/tickets/solvedTickets', async (req, res) => {
     WHERE u.email = '${loggedInUser}'`
   )
 
-  
 
   const query = await db.query(`SELECT title, description, solution FROM tickets 
-    WHERE is_solved = true AND creator_id = '${user_departmentId[0].id}' OR department_id = '${user_departmentId[0].department_id}'`
+    WHERE is_solved = true AND department_id = '${user_departmentId[0].department_id}'`
   )
   
   let title = []
