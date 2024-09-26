@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import Register from "./components/Register.jsx";
 import './styles/Home.css';
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //svg icons for the nav bar and header
-import { faPlus, faRightFromBracket, faUser, faClock, faCircleCheck, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faRightFromBracket, faUser, faClock, faCircleCheck, faSun, faMoon, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 //svg icons for the comment interactions
 import { faTrashCan, faClipboard, faCheck, faComment } from '@fortawesome/free-solid-svg-icons';
 import LoadTicketsByUser from "./components/TicketsByUser.jsx";
@@ -29,6 +30,9 @@ function Homepage() {
     const [timeLeft, setTimeLeft] = useState(600)
     const [isTimerRunning, setIsTimerRunning] = useState(true)
     const [ticketPopup, setTicketPopup] = useState(false)
+    //boolean for if the user is in IT and registration popup
+    const [isIt, setIsIt] = useState(false)
+    const [userRegister, setUserRegister] = useState(false)
 
     const [colorPrimary, setColorPrimary] = useState('')//light mode primary color: rgb(244, 247, 254) - dark mode primary color: rgb(82, 85, 99)
     const [colorSecondary, setColorSecondary] = useState('')//light mode secondary color: rgb(48, 60, 115) - dark mode secondary color: rgb(217, 221, 230)
@@ -48,6 +52,7 @@ function Homepage() {
 
     //check the user's color theme preference on loading
     useEffect(()=> {
+        setIsIt(sessionStorage.getItem('department') === 'IT' ? true : false)
         if(localStorage.getItem("is_darkmode") === null){
             localStorage.setItem("is_darkmode", 'false')
         }
@@ -89,8 +94,7 @@ function Homepage() {
     //if countdown is 0 JWT and the user is deleted from sessionStorage and needs to sign in again
     setTimeout(() => {
         if(timeLeft < 1){
-            sessionStorage.removeItem("token")
-            sessionStorage.removeItem("user")
+            sessionStorage.clear()
             localStorage.setItem("is_darkmode", isDarkmode ? false : true)
             location.reload()
         }
@@ -99,7 +103,6 @@ function Homepage() {
 
     //get current logged in user
     const loggedInUser = sessionStorage.getItem("user")
-
 
     //add new task to UI and to the database too
     const addTicketPopup = () => {
@@ -160,6 +163,12 @@ function Homepage() {
         setSolvedTicketsPopup(!solvedTicketsPopup)
     }
 
+    //register new user (only accessible for people in IT department)
+    const registerUser = () => {
+        setUserRegister(!userRegister)
+    }
+
+
     //handle logging out
     const logOut = () => {
         sessionStorage.removeItem("token")
@@ -200,6 +209,10 @@ function Homepage() {
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faCircleCheck} className="navbar-nav-element_icon"/>
                     <button className="navbar-nav-element_text header-content" onClick={solvedTickets}>Solved ickets</button>
+                </li>
+                <li className="navbar-nav-element nav-user">
+                    <FontAwesomeIcon icon={faUserPlus} className="navbar-nav-element_icon nav-user_plus"/>
+                    <button disabled={isIt ? false : true} className="navbar-nav-element_text nav-user_text" onClick={registerUser}>Register user {isIt}</button>
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faRightFromBracket} className="navbar-nav-element_icon"/>
@@ -267,6 +280,7 @@ function Homepage() {
             </table>
 
         </div>}
+        {userRegister && <Register />}
         <ToastContainer />
     </>
 }

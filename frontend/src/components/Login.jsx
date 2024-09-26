@@ -37,9 +37,10 @@ function Login(){
         e.preventDefault()
         if(!email || !password) {
             toast.error("Please fill out all the fields")
-        }
+        } else {
         try{
             let sentData = await axios.post('http://localhost:3000/users/login', { email, password })
+            //console.log(sentData.data.token, sentData.data.is_admin, sentData.data.department)
             //user doesn't exist or credentials are incorrect (no jwt is awarded)
             if(sentData.data.result === "No user found"){
                 toast.error("No user found. Password or email is incorrect")
@@ -65,6 +66,7 @@ function Login(){
             }
         } catch(err){
             alert(err)
+        }
     }}
 
     return <>

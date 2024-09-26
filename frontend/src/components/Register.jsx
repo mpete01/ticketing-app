@@ -9,9 +9,7 @@ function Register(){
     const [password, setPassword] = useState("")
     const [department, setDepartment] = useState("Select your department")
     const [showPassword, setShowPassword] = useState(false)
-    const [popup, setPopup] = useState(false)
     const [failedPopup, setFailedPopup] = useState(false)
-    const [alreadyRegistered, setAlreadyRegisterd] = useState(false)
 
     //check the user's color theme preference on loading
     useEffect(()=> {
@@ -52,13 +50,6 @@ function Register(){
                         alert("You have been registered successfully. Please Log in")
                     }
                 }
-
-                /*if(sentData.data === "User already registered"){
-                    setAlreadyRegisterd(!alreadyRegistered)
-                    alert("User already registered")
-                } else {
-                    setPopup(!popup)
-                }*/
             } catch(err){
                 console.log(err)
             }
@@ -72,29 +63,13 @@ function Register(){
         }
     }
 
-    const togglePopup = () => {
-        setPopup(!popup)
-    }
-
-    const toggleFailedPopup = () => {
-        setFailedPopup(!failedPopup)
-    }
-
-    const toggleAlreadyRegistered = () => {
-        setAlreadyRegisterd(!alreadyRegistered)
-    }
-
-    if(popup || failedPopup) {
-        document.body.classList.add('active-modal')
-    } else {
-        document.body.classList.remove('active-modal')
-    }
-
-
     return <>
-        <div className="register-container">
-            <form className="register-form">
-                <div className="register-form-title">Register</div>
+               
+
+        <div className="modal">
+            <div className="overlay"></div>
+            <form className="register-form modal-content">
+                <div className="register-form-title modal-content_header">Register</div>
                 <input type="text" className="register-form-username input" value={name.trim()} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
                 <input type="text" className="register-form-email input" value={email.trim()} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
                 <select name="departments" className="register-form-department input">
@@ -116,35 +91,6 @@ function Register(){
                 <button type="submit" className="register-form-submitButton" onClick={handleSubmit}>Register</button>
                 <p>Already have an acoount?<Link className="register-form-link" to="/Login" style={{ textDecoration: 'underline' }}> Log in</Link></p>
             </form>
-            {popup && (
-                <div className="modal">
-                    <div onClick={togglePopup} className="overlay"></div>
-                    <div className="modal-content">
-                        <h2>Your account has been registered</h2>
-                        <p>Please <Link to='/login' style={{ textDecoration: 'underline' }}>Log in</Link> to your account</p>
-                        
-                    </div>
-                </div>
-            )}
-            {failedPopup && (
-                <div className="modal">
-                    <div onClick={toggleFailedPopup} className="overlay"></div>
-                    <div className="modal-content">
-                        <h2>Invalid email or password</h2>
-                        <p>Email address must be a valid address<br />Password should be at lest 8 characters and contain numbers</p>
-                        <button className="close-modal" onClick={toggleFailedPopup}>Close</button>
-                    </div>
-                </div>
-            )}
-            {alreadyRegistered && (
-                <div className="modal">
-                    <div onClick={toggleAlreadyRegistered} className="overlay"></div>
-                    <div className="modal-content">
-                        <h2>User already registered</h2>
-                        <button className="close-modal" onClick={toggleAlreadyRegistered}>Close</button>
-                    </div>
-                </div>
-            )}
         </div>    
     </>
 }
