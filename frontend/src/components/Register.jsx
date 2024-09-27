@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import '../styles/register.css';
-import { Link,  useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-function Register(){
+
+function Register({ onClosePopup }){
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -33,21 +35,21 @@ function Register(){
         e.preventDefault()
         //checks if any of the fields are empty, if yes alerts the user that they need to be filled
         if(!name.trim() || !email.trim() || !password.trim()) {
-            setFailedPopup(!failedPopup)
+            toast.warn("Please fill out all the fields")
         }
         //checks if the pssword is at least 8 characters and contains numbers
         if(password.length >= 8 && /\d/.test(password)){
             //sending the user's data to the server to register it in the database
             try{
                 if(department === "Select your department"){
-                    alert("Choose your department")
+                    toast.error("No department was chosen")
                 } else{
                     let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password, department })
                     console.log(sentData)
                     if(sentData.data === "User already registered"){
-                        alert("User already registered")
+                        toast.error("User already registered")
                     } else {
-                        alert("You have been registered successfully. Please Log in")
+                        toast.success("User successfully registered")
                     }
                 }
             } catch(err){
@@ -56,6 +58,7 @@ function Register(){
         }
         //ask the user to enter valid email and password
         else {
+            toast.error()
             setFailedPopup(!failedPopup)
             setEmail("")
             setPassword("")
@@ -63,34 +66,32 @@ function Register(){
         }
     }
 
+    
     return <>
-               
-
         <div className="modal">
             <div className="overlay"></div>
-            <form className="register-form modal-content">
-                <div className="register-form-title modal-content_header">Register</div>
-                <input type="text" className="register-form-username input" value={name.trim()} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
-                <input type="text" className="register-form-email input" value={email.trim()} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
-                <select name="departments" className="register-form-department input">
-                    <option  className="register-form-department_option" value="Select your department" onClick={(e) => setDepartment(e.target.value)}>Select your department</option>
-                    <option className="register-form-department_option" value="IT" onClick={(e) => setDepartment(e.target.value)}>IT</option>
-                    <option className="register-form-department_option" value="Maintanence" onClick={(e) => setDepartment(e.target.value)}>Maintanence</option>
-                    <option className="register-form-department_option" value="HR" onClick={(e) => setDepartment(e.target.value)}>HR</option>
-                    <option className="register-form-department_option" value="Marketing" onClick={(e) => setDepartment(e.target.value)}>Marketing</option>
-                    <option className="register-form-department_option" value="Finance" onClick={(e) => setDepartment(e.target.value)}>Finance</option>
-                    <option className="register-form-department_option" value="Open Office" onClick={(e) => setDepartment(e.target.value)}>Open Office</option>
-                    option
-                </select>
-                <div className="password-input-field">
-                    <input type={showPassword ? "text" : "password"} value={password.trim()} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
-                    <button type="button" className="show-password" id="show-password" onClick={togglePasswordVisibility}>
-                        {showPassword ? <i >&#128065;</i> : <i >&#128065;</i>}
-                    </button>
-                </div>
-                <button type="submit" className="register-form-submitButton" onClick={handleSubmit}>Register</button>
-                <p>Already have an acoount?<Link className="register-form-link" to="/Login" style={{ textDecoration: 'underline' }}> Log in</Link></p>
-            </form>
+                <form className="register-form">
+                    <div className="register-form-title modal-content_header">Register<button onClick={onClosePopup}>X</button></div>
+                    <input type="text" className="register-form-username input" value={name} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />
+                    <input type="text" className="register-form-email input" value={email.trim()} id="register-email" placeholder="Enter an email address" onChange={(e) => setEmail(e.target.value)}/><br />
+                    <select name="departments" className="register-form-department">
+                        <option  className="register-form-department_option" value="Select your department" onClick={(e) => setDepartment(e.target.value)}>Select your department</option>
+                        <option className="register-form-department_option" value="IT" onClick={(e) => setDepartment(e.target.value)}>IT</option>
+                        <option className="register-form-department_option" value="Maintanence" onClick={(e) => setDepartment(e.target.value)}>Maintainence</option>
+                        <option className="register-form-department_option" value="HR" onClick={(e) => setDepartment(e.target.value)}>HR</option>
+                        <option className="register-form-department_option" value="Marketing" onClick={(e) => setDepartment(e.target.value)}>Marketing</option>
+                        <option className="register-form-department_option" value="Finance" onClick={(e) => setDepartment(e.target.value)}>Finance</option>
+                        <option className="register-form-department_option" value="Open Office" onClick={(e) => setDepartment(e.target.value)}>Open Office</option>
+                        option
+                    </select>
+                    <div className="password-input-field">
+                        <input type={showPassword ? "text" : "password"} value={password.trim()} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />
+                        <button type="button" className="show-password" id="show-password" onClick={togglePasswordVisibility}>
+                            {showPassword ? <i >&#128065;</i> : <i >&#128065;</i>}
+                        </button>
+                    </div>
+                    <button type="submit" className="register-form-submitButton" onClick={handleSubmit}>Register</button>
+                </form>
         </div>    
     </>
 }

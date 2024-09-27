@@ -120,7 +120,7 @@ function LoadTicketsOnUserDepartment() {
                            <textarea name="ticket" id="ticket"  className="ticket-textarea" value={ticket}></textarea><br />
                            <button className="ticket-actions solve" onClick={() => solveTicketPopup(index)}><FontAwesomeIcon icon={faCheck}/></button>
                            <button className="ticket-actions change_owner" onClick={() => assignToUserPopup(index)}><FontAwesomeIcon icon={faClipboard} /></button>
-                           <button className="ticket-actions delete" disabled={isDisabled} onClick={() => deleteTicket(index)} ><FontAwesomeIcon icon={faTrashCan} /></button>
+                           <button className="ticket-actions delete" disabled={isDisabled} style={{ opacity: isDisabled ? 0.5 : 1 }} onClick={() => deleteTicket(index)} ><FontAwesomeIcon icon={faTrashCan} /></button>
                            <button className="ticket-actions comment" onClick={() => openCommentPopup(index)}><FontAwesomeIcon icon={faComment} /></button>
                        </li>
                    )}

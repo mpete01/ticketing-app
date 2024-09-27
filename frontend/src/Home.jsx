@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Register from "./components/Register.jsx";
 import './styles/Home.css';
+//import './styles/register.css';
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //svg icons for the nav bar and header
@@ -95,7 +96,7 @@ function Homepage() {
     setTimeout(() => {
         if(timeLeft < 1){
             sessionStorage.clear()
-            localStorage.setItem("is_darkmode", isDarkmode ? false : true)
+            localStorage.setItem("is_darkmode", isDarkmode ? 'true' : 'false')
             location.reload()
         }
     }, timeLeft)
@@ -145,7 +146,6 @@ function Homepage() {
         else {
             toast.error("Please fill out every field")
         }
-
     }
 
     //display already solved tickets
@@ -165,6 +165,9 @@ function Homepage() {
 
     //register new user (only accessible for people in IT department)
     const registerUser = () => {
+        setUserRegister(!userRegister)
+    }
+    const closeRegisterUser = () => {
         setUserRegister(!userRegister)
     }
 
@@ -212,7 +215,7 @@ function Homepage() {
                 </li>
                 <li className="navbar-nav-element nav-user">
                     <FontAwesomeIcon icon={faUserPlus} className="navbar-nav-element_icon nav-user_plus"/>
-                    <button disabled={isIt ? false : true} className="navbar-nav-element_text nav-user_text" onClick={registerUser}>Register user {isIt}</button>
+                    <button disabled={isIt ? false : true} style={{ opacity: isIt ? 1 : 0.5 }} className="navbar-nav-element_text nav-user_text" onClick={registerUser}>Register user {isIt}</button>
                 </li>
                 <li className="navbar-nav-element">
                     <FontAwesomeIcon icon={faRightFromBracket} className="navbar-nav-element_icon"/>
@@ -278,9 +281,8 @@ function Homepage() {
                     )}
                 </tbody>
             </table>
-
         </div>}
-        {userRegister && <Register />}
+        {userRegister && <Register onClosePopup={closeRegisterUser}/>}
         <ToastContainer />
     </>
 }
