@@ -57,12 +57,15 @@ app.get("/", (req,res) => {
 app.post('/users/register', async (req, res) => {
   const { name, email, password, department } = req.body
 
+  const trimmedName = name.trim()
+  const trimmedDepartment = department.trim()
+
   //hash password with bcrypt 
   let hashedPassword = await bcrypt.hash(password, 10)
 
   //check if the user will have admin previliges
   let is_admin = false
-  if(department === "IT" || department === "Maintainence") {
+  if(trimmedDepartment === "IT" || trimmedDepartment === "Maintainence") {
     is_admin = true
   } else {
     is_admin = false
@@ -85,7 +88,7 @@ app.post('/users/register', async (req, res) => {
   else {
     storedUser = await db.query(
       `INSERT INTO users (username, email, password, department, is_admin)
-      VALUES ('${name}', '${email}', '${hashedPassword}', '${department}', '${is_admin}')`
+      VALUES ('${trimmedName}', '${email}', '${hashedPassword}', '${trimmedDepartment}', '${is_admin}')`
     )
     res.send("New user successfully registered")
   }
@@ -134,13 +137,16 @@ app.post('/users/login', async (req, res) => {
           token: token,
           is_admin: is_admin,
           department: query[0].department,
-          result: query[0]
+          query: query[0],
+          result: "Successful authenitcation, email and password are correct"
         })
       }
       //send back a response if password is incorrect
       else {
         console.log("Password is incorrect")
-        res.send("Password is incorrect")
+        res.json({
+          result: "Password is incorrect"
+      })
       }
     })
   }
