@@ -45,6 +45,10 @@
 .popup-open_email {
     width: 100%;
     height: fit-content;
+    color: var(--color-secondary);
+    border: 1px solid var(--color-secondary);
+    padding: 0.5rem;
+    background-color: var(--color-primary);
 }
 
 .popup-open .popup {
@@ -56,11 +60,6 @@
     background-color: var(--color-primary);
     color: var(--color-secondary);
     width: 100%;
-}
-
-.popup-open_email {
-    border: 1px solid var(--color-secondary);
-    padding: 0.5rem;
 }
 
 .assignment-assign-btn {
@@ -79,7 +78,7 @@
 
 .commentPopup-existing-comments {
     display: flex; /* Make the li container a flexbox */
-    border-bottom: 2px solid rgba(48, 60, 115, 0.8);
+    border-bottom: 2px solid var(--color-secondary);
 }
   
 .commentData {

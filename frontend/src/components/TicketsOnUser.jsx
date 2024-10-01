@@ -130,7 +130,6 @@ function LoadTicketsOnUser() {
             <div className="popup-open"></div>
             <p>Assign ticket to a new user</p>
             <input type="email" className="popup-open_email" placeholder="Enter the email address of the person" onChange={(e) => setAssignedToUser(e.target.value)}/> <br />
-            <p>Assign Ticket To: {assignedToUser}</p>
             <button type="submit" className="assignment-assign-btn assignment-btn" onClick={ticketAssignment}>Assign Ticket</button>
             <button onClick={closeAssignmentPopup} className="assignment-close-btn assignment-btn">Close</button>
         </div>}
