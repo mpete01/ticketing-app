@@ -193,7 +193,7 @@ app.post('/tickets/uploadNewTicket', async (req, res) => {
           });
       };
       search()
-      console.log(department)
+
       if(department !== undefined) {
         departmentId = await db.query(
           `SELECT id from department WHERE name = ${department}`
@@ -203,6 +203,7 @@ app.post('/tickets/uploadNewTicket', async (req, res) => {
         const userDepartment = await db.query(
           `SELECT department FROM users WHERE email = '${newTicketForUser}'`
         )
+        
         departmentId = await db.query(
           `SELECT id from departments WHERE name = '${userDepartment[0].department}'`
         )
@@ -216,7 +217,7 @@ app.post('/tickets/uploadNewTicket', async (req, res) => {
           //add the ticket to database (not yet assigned to user)
           const addNewTicket = await db.query(
             `INSERT INTO tickets (title, description, created_at, creator_id, department_id, is_solved)
-            VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId}', false);`,
+            VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}', false);`,
             (err) => {
               if(err){
                 throw err
