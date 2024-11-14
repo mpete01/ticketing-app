@@ -35,10 +35,18 @@ function LoadTicketsOnUserDepartment() {
        useEffect(() => {
            const onUser = async (e) => {
                try {
-                   const onUserDepartmentTickets = await axios.post('http://localhost:3000/tickets/getDepartmentTickets', { currentUserEmail })
-                   setTicketTitlesOnUserDepartment(onUserDepartmentTickets.data.title)
-                   setTicketsOnUserDepartment(onUserDepartmentTickets.data.tickets)
-                   setTicketIndex(onUserDepartmentTickets.data.ids)
+                   // const onUserDepartmentTickets = await axios.post('http://localhost:3000/tickets/getDepartmentTickets', { currentUserEmail })
+                   const response = await fetch('http://192.168.3.55:3000/tickets/getDepartmentTickets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ currentUserEmail })
+                   })
+                   const onUserDepartmentTickets = await response.json()
+                   setTicketTitlesOnUserDepartment(onUserDepartmentTickets.title)
+                   setTicketsOnUserDepartment(onUserDepartmentTickets.tickets)
+                   setTicketIndex(onUserDepartmentTickets.ids)
                } catch(err){
                    console.log("error occoured")
                }
@@ -54,7 +62,15 @@ function LoadTicketsOnUserDepartment() {
        //delete ticket from database based on its index (only for admins)
        const deleteTicket = async (index) => {
            const delTicketIndex = ticketIndex[index]
-           const delTask = await axios.post("http://localhost:3000/tickets/deleteTicket", { delTicketIndex })
+           // const delTask = await axios.post("http://localhost:3000/tickets/deleteTicket", { delTicketIndex })
+           const response = await fetch('192.168.3.55:3000/tickets/deleteTicket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ delTicketIndex })
+           })
+           const delTask = await response.json()
            window.location.reload();
        }
    
@@ -66,8 +82,16 @@ function LoadTicketsOnUserDepartment() {
        //reassigns the ticket to given user in
        const ticketAssignment = async () => {
            //console.log(`Inner function ticket index: ${ticketToBeAssigned}`)
-           const response = await axios.post('http://localhost:3000/tickets/reassignTickets', { ticketToBeAssigned, assignedToUser })
-           alert(response.data.result)
+           // const response = await axios.post('http://localhost:3000/tickets/reassignTickets', { ticketToBeAssigned, assignedToUser })
+           const res = await fetch('192.168.3.55:3000/tickets/reassignTickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ticketToBeAssigned, assignedToUser })
+           })
+           const response = await res.json()
+           alert(response.result)
        }
        //closes the reassignment popup window
        const closeAssignmentPopup = () => {
@@ -83,7 +107,15 @@ function LoadTicketsOnUserDepartment() {
            //const solveTicketResponse = await axios.post('http://localhost:3000/ticekts/solveTickets', { solveTicketId, currentUserEmail })
        }
        const solveTicket = async () => {
-           const solution = await axios.post('http://localhost:3000/ticekts/solveTickets', { solvedTicketId, currentUserEmail, ticketSolution })
+           // const solution = await axios.post('http://localhost:3000/ticekts/solveTickets', { solvedTicketId, currentUserEmail, ticketSolution })
+           const response = await fetch('http://192.168.3.55:3000/ticekts/solveTickets', {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ solvedTicketId, currentUserEmail, ticketSolution })
+           })
+           const solution = await response.json()
            console.log(solution)
            
        }
@@ -96,11 +128,19 @@ function LoadTicketsOnUserDepartment() {
        const openCommentPopup = async (index) => {
            const commentTicketId = ticketIndex[index] //id if the ticket where the new comment will be created
            setCommentPopup(!commentPopup)
-           const existingCommentsResponse = await axios.post('http://localhost:3000/tikcets/existingComments', { commentTicketId, currentUserEmail })
+           // const existingCommentsResponse = await axios.post('http://localhost:3000/tikcets/existingComments', { commentTicketId, currentUserEmail })
+           const response = await fetch('http://192.168.3.55:3000/tikcets/existingComments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'applicaiton/json'
+            },
+            body: JSON.stringify({ commentTicketId, currentUserEmail })
+           })
+           const existingCommentsResponse = await response.json()
    
-           setExistingComments(existingCommentsResponse.data.comments)
-           setExistingCommentsOnUsersDepartment(existingCommentsResponse.data.created_by)
-           setExistingCommentDate(existingCommentsResponse.data.created_at)
+           setExistingComments(existingCommentsResponse.comments)
+           setExistingCommentsOnUsersDepartment(existingCommentsResponse.created_by)
+           setExistingCommentDate(existingCommentsResponse.created_at)
        }
        //close comment UI
        const closeCommentPopup = () => {

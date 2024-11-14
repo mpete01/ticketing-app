@@ -12,8 +12,16 @@ function AddNewTicket({ onCloseTicketPopup }){
 
     const addTicket = async () => {
         if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){
-            const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
-            if(sentTicket.data.result === "Ticket successfully created"){
+           // const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
+            const response =  await fetch("http://192.168.3.55:3000/ticekts/uploadNewTicket", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time }),
+            })
+            const sentTicket = await response.json()
+            if(sentTicket.result === "Ticket successfully created"){
                 toast.success("Ticket successfully created")
                 setTimeout(() => {
                     setNewTicketForUser("")
@@ -24,8 +32,8 @@ function AddNewTicket({ onCloseTicketPopup }){
                 }, 3000);
             }
             else {
-                console.log(sentTicket.data.error)
-                toast.error(sentTicket.data.errorMsg)
+                console.log(sentTicket.error)
+                toast.error(sentTicket.errorMsg)
             }
         }
         else {

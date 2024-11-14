@@ -9,10 +9,18 @@ function LoadSolvedTickets(){
     const currentUserEmail = sessionStorage.getItem("user")
 
     useEffect(async () => {
-        const response = await axios.post('http://localhost:3000/tickets/solvedTickets', { currentUserEmail })
-        setSolvedTicketTitles(response.data.title)
-        setSolvedTicketDescription(response.data.description)
-        setSolvedTicketSolution(response.data.solution)
+        // const response = await axios.post('http://localhost:3000/tickets/solvedTickets', { currentUserEmail })
+        const res = await fetch("http://192.168.3.55:3000/solvedTickets", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ currentUserEmail })
+        })
+        const response = await res.json()
+        setSolvedTicketTitles(response.title)
+        setSolvedTicketDescription(response.description)
+        setSolvedTicketSolution(response.solution)
     }, [])
     
     /*const getStuff = async () => {

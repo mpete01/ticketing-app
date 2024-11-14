@@ -39,20 +39,28 @@ function Login(){
             toast.error("Please fill out all the fields")
         } else {
         try{
-            let sentData = await axios.post('http://localhost:3000/users/login', { email, password })
-            console.log(sentData.data.result)
+            const response = await fetch('http://192.168.3.55:3000/users/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+              });
+              
+            const sentData = await response.json();
+            console.log(sentData)
             //user doesn't exist or credentials are incorrect (no jwt is awarded)
-            if(sentData.data.result === "No user found"){
+            if(sentData.result === "No user found"){
                 toast.error("No user found. Password or email is incorrect")
-            } else if (sentData.data.result === "Password is incorrect"){
+            } else if (sentData.result === "Password is incorrect"){
                 toast.error("No user found. Password or email is incorrect")
             }
             //user exists and got jwt from server then user is redirected to home page ("/")
-            else if(sentData.data.result === "Successful authenitcation, email and password are correct") {
+            else if(sentData.result === "Successful authenitcation, email and password are correct") {
                 sessionStorage.setItem("user", email)
-                sessionStorage.setItem("token", sentData.data.token)
-                sessionStorage.setItem("is_admin", sentData.data.is_admin)
-                sessionStorage.setItem("department", sentData.data.department)
+                sessionStorage.setItem("token", sentData.token)
+                sessionStorage.setItem("is_admin", sentData.is_admin)
+                sessionStorage.setItem("department", sentData.department)
                 toast.success("Login successful. Redirecting to the home page. Just a few seconds", {
                     hideProgressBar:true
                     });

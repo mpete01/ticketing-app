@@ -298,7 +298,7 @@ app.post('/tickets/getDepartmentTickets', async (req, res) => {
 //GET TICKETS FROM DATABASE THAT IS ON THE CURRENT USER
 app.post('/tickets/getTicketsOnUser', async (req, res) => {
   const { currentUserEmail } = req.body
-
+  
   const currentUserId = await db.query(
     `SELECT id FROM users WHERE email = '${currentUserEmail}'`
   )
@@ -336,7 +336,7 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
     `SELECT id, email FROM users WHERE email = '${currentUserEmail}' `
   )
 
-
+  
   let titles = []
   let description = []
   let ids = []

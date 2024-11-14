@@ -126,8 +126,17 @@ function Homepage() {
     }
     const addTicket = async () => {
         if(newTicketTitle.trim() !== "" && newTicket.trim() !== "" && newTicketForUser.trim() !== ""){ /**/
-            const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
-            if(sentTicket.data.result === "Ticket successfully created"){
+            // const sentTicket = await axios.post("http://localhost:3000/tickets/uploadNewTicket", { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
+            const response = await fetch('http://192.168.3.55:3000/tickets/uploadNewTicket', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
+            })
+            const sentTicket = await response.json()
+
+            if(sentTicket.result === "Ticket successfully created"){
                 toast.success("Ticket successfully created")
                 setTimeout(() => {
                     setNewTicketForUser("")
@@ -138,8 +147,8 @@ function Homepage() {
                 }, 5000);
             }
             else {
-                console.log(sentTicket.data.error)
-                toast.error(sentTicket.data.errorMsg)
+                console.log(sentTicket.error)
+                toast.error(sentTicket.errorMsg)
             }
         }
         else {
@@ -151,10 +160,18 @@ function Homepage() {
     const solvedTickets = () => {
         setSolvedTicketsPopup(!solvedTicketsPopup)
         const loadData = async () => {
-            const response = await axios.post('http://localhost:3000/tickets/solvedTickets', { loggedInUser })
-            setSolvedTicketTitles(response.data.title)
-            setSolvedTicketDescription(response.data.description)
-            setSolvedTicketSolution(response.data.solution)
+            // const response = await axios.post('http://localhost:3000/tickets/solvedTickets', { loggedInUser })
+            const res = await fetch('http://192.168.3.55:3000/tickets/solvedTickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ loggedInUser })
+            })
+            const response = await res.json()
+            setSolvedTicketTitles(response.title)
+            setSolvedTicketDescription(response.description)
+            setSolvedTicketSolution(response.solution)
         }
         loadData()
     }

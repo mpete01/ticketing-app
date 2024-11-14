@@ -44,9 +44,17 @@ function Register({ onClosePopup }){
                 if(department === "Select your department"){
                     toast.error("No department was chosen")
                 } else{
-                    let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password, department })
+                    // let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password, department })
+                    const response = await fetch('http://192.168.3.55:3000/users/register', {
+                        method: 'POST',
+                        headers: {
+                            'Context-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, email, password, department })
+                    })
+                    const sentData = await response.json()
                     console.log(sentData)
-                    if(sentData.data === "User already registered"){
+                    if(sentData === "User already registered"){
                         toast.error("User already registered")
                     } else {
                         toast.success("User successfully registered")

@@ -36,10 +36,19 @@ function LoadTicketsByUser() {
     useEffect(() => {
         const byUser = async (e) => {
             try {
-                const byUserTickets = await axios.post('http://localhost:3000/tickets/getTicketsByUser', { currentUserEmail })
-                setTicketTitlesByUser(byUserTickets.data.title)
-                setTicketsByUser(byUserTickets.data.tickets)
-                setTicketIndex(byUserTickets.data.id)
+                // const byUserTickets = await axios.post('http://localhost:3000/tickets/getTicketsByUser', { currentUserEmail })
+                const response = await fetch('http://192.168.3.55:3000/tickets/getTicketsByUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ currentUserEmail })
+                })
+                const byUserTickets = await response.json()
+
+                setTicketTitlesByUser(byUserTickets.title)
+                setTicketsByUser(byUserTickets.tickets)
+                setTicketIndex(byUserTickets.id)
             } catch(err){
                 console.log("error occoured")
             }
@@ -55,7 +64,15 @@ function LoadTicketsByUser() {
     //delete ticket from database based on its index (only for admins)
     const deleteTicket = async (index) => {
         const delTicketIndex = ticketIndex[index]
-        const delTask = await axios.post("http://localhost:3000/tickets/deleteTicket", { delTicketIndex })
+        // const delTask = await axios.post("http://localhost:3000/tickets/deleteTicket", { delTicketIndex })
+        const response = await fetch('http://192.168.3.55:3000/tickets/deleteTicket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ delTicketIndex })
+        })
+        const delTask = await response.json()
         toast.success("Ticket successfully deleted")
         setTimeout(() => {
             location.reload()
@@ -69,8 +86,16 @@ function LoadTicketsByUser() {
     }
     //reassigns the ticket to given user in
     const ticketAssignment = async () => {
-        const response = await axios.post('http://localhost:3000/tickets/reassignTickets', { ticketToBeAssigned, assignedToUser })
-        alert(response.data.result)
+        // const response = await axios.post('http://localhost:3000/tickets/reassignTickets', { ticketToBeAssigned, assignedToUser })
+        const res = await fetch('192.168.3.55:3000/tickets/reassignTickets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ticketToBeAssigned, assignedToUser })
+        })
+        const response = await res.json()
+        alert(response.result)
     }
     //closes the reassignment popup window
     const closeAssignmentPopup = () => {
@@ -86,7 +111,15 @@ function LoadTicketsByUser() {
         //const solveTicketResponse = await axios.post('http://localhost:3000/ticekts/solveTickets', { solveTicketId, currentUserEmail })
     }
     const solveTicket = async () => {
-        const solution = await axios.post('http://localhost:3000/ticekts/solveTickets', { solvedTicketId, currentUserEmail, ticketSolution })
+        // const solution = await axios.post('http://localhost:3000/ticekts/solveTickets', { solvedTicketId, currentUserEmail, ticketSolution })
+        const response = await fetch('192.168.3.55:3000/ticekts/solveTickets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ solvedTicketId, currentUserEmail, ticketSolution })
+        })
+        const solution = await response.json()
         console.log(solution)
         
     }
@@ -99,11 +132,20 @@ function LoadTicketsByUser() {
     const openCommentPopup = async (index) => {
         const commentTicketId = ticketIndex[index] //id if the ticket where the new comment will be created
         setCommentPopup(!commentPopup)
-        const existingCommentsResponse = await axios.post('http://localhost:3000/tikcets/existingComments', { commentTicketId, currentUserEmail })
+        // const existingCommentsResponse = await axios.post('http://localhost:3000/tikcets/existingComments', { commentTicketId, currentUserEmail })
+        const response = await fetch('192.168.3.55:3000/tikcets/existingComments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'applicaiton/json'
+            },
+            body: JSON.stringify({ commentTicketId, currentUserEmail })
+        })
 
-        setExistingComments(existingCommentsResponse.data.comments)
-        setExisitngCommentsbyUsers(existingCommentsResponse.data.created_by)
-        setExistingCommentDate(existingCommentsResponse.data.created_at)
+        const existingCommentsResponse = await response.json()
+
+        setExistingComments(existingCommentsResponse.comments)
+        setExisitngCommentsbyUsers(existingCommentsResponse.created_by)
+        setExistingCommentDate(existingCommentsResponse.created_at)
     }
     //close comment UI
     const closeCommentPopup = () => {
