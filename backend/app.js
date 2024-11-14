@@ -156,61 +156,104 @@ app.post('/users/login', async (req, res) => {
 //UPLOAD NEW TICKET TO DATABASE
 app.post('/tickets/uploadNewTicket', async (req, res) => {
   const { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time } = req.body
+  let department;
+  let departmentId;
 
-  try {
-    const loggedInUserid = await db.query(
-      `SELECT id FROM users
-      WHERE email='${loggedInUser}'`
-    )
-    const assignedToUserDepartment = await db.query(
-      `SELECT department FROM users WHERE email = '${newTicketForUser}'`
-    )
+  //console.log({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
+  const keywordActions = {
+    phone: "Maintainence",
+    storage: "IT",
+  };
 
-    const departmentId = await db.query(
-      `SELECT id from departments WHERE name = '${assignedToUserDepartment[0].department}'`
-    )
-
-    //add the ticket to database (not yet assigned to user)
-    const addNewTicket = await db.query(
-      `INSERT INTO tickets (title, description, created_at, creator_id, department_id, is_solved)
-      VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}', false);`,
-      (err) => {
-        if(err){
-          throw err
-        }
+      const wordSearch = () => {
+        const actions = [];
+            Object.keys(keywordActions).forEach((keyword) => {
+                if (newTicket.toLowerCase().includes(keyword)) {
+                  actions.push(keywordActions[keyword]);
+                }
+              });
+        return actions;
+      };    
+      
+      const search = () => {
+        const actions = wordSearch();
+          actions.forEach((action) => {
+            switch (action) {
+              case "Maintainence":
+                department = "Maintainence"
+                console.log("Assigned to Maintainence")
+                break;
+              case "IT":
+                department = "IT"
+                console.log("Assigned to IT")
+                break;
+              default:
+                console.log("No assignment action taken.");
+            }
+          });
+      };
+      search()
+      console.log(department)
+      if(department !== undefined) {
+        departmentId = await db.query(
+          `SELECT id from department WHERE name = ${department}`
+        )
       }
-    )
-
-    //assign newly created ticket to specified user
-    const getNewTicketId = await db.query(
-      `SELECT id FROM tickets
-      WHERE created_at = '${time}'`
-    )
-
-    //assign ticekt to the user's department the ticket is assigned to
-    const assignedToUsersDepartment = await db.query(`
-      SELECT id FROM users WHERE email = '${newTicketForUser}'
-    `)
-
-    const assignNewTicket = await db.query(
-      `INSERT INTO ticket_assignments (ticket_id, user_id)
-      VALUES ('${getNewTicketId[0].id}', '${assignedToUsersDepartment[0].id}');`,
-      (err) => {
-        if(err){
-          throw err
-        }
+      else {
+        const userDepartment = await db.query(
+          `SELECT department FROM users WHERE email = '${newTicketForUser}'`
+        )
+        departmentId = await db.query(
+          `SELECT id from departments WHERE name = '${userDepartment[0].department}'`
+        )
       }
-    )
-    res.json({
-      result: "Ticket successfully created"    
-    })
-  } catch (err) {
-    console.error("Error: " + err)
-    res.json({
-      error: err,
-      errorMsg: "An error occoured"
-    })
-  }
+      try {
+          const loggedInUserid = await db.query(
+            `SELECT id FROM users
+            WHERE email='${loggedInUser}'`
+          )
+      
+          //add the ticket to database (not yet assigned to user)
+          const addNewTicket = await db.query(
+            `INSERT INTO tickets (title, description, created_at, creator_id, department_id, is_solved)
+            VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId}', false);`,
+            (err) => {
+              if(err){
+                throw err
+              }
+            }
+          )
+      
+          //assign newly created ticket to specified user
+          const getNewTicketId = await db.query(
+            `SELECT id FROM tickets
+            WHERE created_at = '${time}'`
+          )
+      
+          //assign ticekt to the user's department the ticket is assigned to
+          const assignedToUsersDepartment = await db.query(`
+            SELECT id FROM users WHERE email = '${newTicketForUser}'
+          `)
+      
+          const assignNewTicket = await db.query(
+            `INSERT INTO ticket_assignments (ticket_id, user_id)
+            VALUES ('${getNewTicketId[0].id}', '${assignedToUsersDepartment[0].id}');`,
+            (err) => {
+              if(err){
+                throw err
+              }
+            }
+          )
+          res.json({
+            result: "Ticket successfully created"    
+          })
+        } catch (err) {
+          console.error("Error: " + err)
+          res.json({
+            error: err,
+            errorMsg: "An error occoured"
+          })
+        }
 })
 
 

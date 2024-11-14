@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Register from "./components/Register.jsx";
 import './styles/Home.css';
-//import './styles/register.css';
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //svg icons for the nav bar and header
