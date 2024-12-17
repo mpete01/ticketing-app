@@ -14,7 +14,7 @@ function Register({ onClosePopup }){
     const [failedPopup, setFailedPopup] = useState(false)
 
     //check the user's color theme preference on loading
-    useEffect(()=> {
+    /*useEffect(()=> {
         if(localStorage.getItem("is_darkmode") === null){
             localStorage.setItem("is_darkmode", 'false')
         }
@@ -25,7 +25,7 @@ function Register({ onClosePopup }){
             root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
             root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
         }
-    }, [])
+    }, [])*/
 
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
@@ -77,7 +77,6 @@ function Register({ onClosePopup }){
     
     return <>
         <div className="modal">
-            <div className="overlay"></div>
                 <form className="register-form">
                     <div className="register-form-title modal-content_header">Register<button onClick={onClosePopup}>X</button></div>
                     <input type="text" className="register-form-username input" value={name} id="register-username" placeholder="Enter a username" onChange={(e) => setName(e.target.value)} /><br />

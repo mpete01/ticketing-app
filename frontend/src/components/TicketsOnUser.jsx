@@ -130,11 +130,12 @@ function LoadTicketsOnUser() {
     const openCommentPopup = async (index) => {
         const commentTicketId = ticketIndex[index] //id if the ticket where the new comment will be created
         setCommentPopup(!commentPopup)
+        console.log(commentTicketId)
         // const existingCommentsResponse = await axios.post('http://localhost:3000/tikcets/existingComments', { commentTicketId, currentUserEmail })
         const response = await fetch('http://192.168.3.55:3000/tikcets/existingComments', {
             method: 'POST',
             headers: {
-                'Content-Type': 'applicaiton/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ commentTicketId, currentUserEmail })
         })
@@ -153,8 +154,7 @@ function LoadTicketsOnUser() {
 
     return<>
         <section className="main-ticketsOnUser">
-            <p>On: {currentUserEmail}</p>
-            <p>--------------------------------</p>
+            <p className="ticketTypeTitle">On: {currentUserEmail}</p>
             <div className="tickets">
                 {ticketsOnUser.map((ticket, index) =>
                     <li key={index}>

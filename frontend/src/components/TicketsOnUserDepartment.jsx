@@ -151,8 +151,7 @@ function LoadTicketsOnUserDepartment() {
    
        return<>
            <section className="main-ticketsOnUser">
-               <p>On Department: {currentDepartment}</p>
-               <p>--------------------------------</p>
+               <p className="ticketTypeTitle">On Department: {currentDepartment}</p>
                <div className="tickets">
                    {ticketsOnUserDepartment.map((ticket, index) =>
                        <li key={index}>

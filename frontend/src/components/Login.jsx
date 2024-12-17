@@ -15,7 +15,7 @@ function Login(){
     const root = document.documentElement
 
     //check the user's color theme preference on loading
-    useEffect(()=> {
+    /*useEffect(()=> {
         if(localStorage.getItem("is_darkmode") === null){
             localStorage.setItem("is_darkmode", 'false')
         }
@@ -26,7 +26,7 @@ function Login(){
             root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
             root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
         }
-    }, [2])
+    }, [2])*/
 
 
     const toggleInputType = () => {
@@ -46,9 +46,7 @@ function Login(){
                 },
                 body: JSON.stringify({ email, password }),
               });
-              
             const sentData = await response.json();
-            console.log(sentData)
             //user doesn't exist or credentials are incorrect (no jwt is awarded)
             if(sentData.result === "No user found"){
                 toast.error("No user found. Password or email is incorrect")
@@ -67,11 +65,6 @@ function Login(){
                 setTimeout(() => {
                     navigate('/')
                 }, 3000);
-                if(localStorage.getItem("is_darkmode") === null){
-                    localStorage.setItem("is_darkmode", false)
-                } else {
-                    localStorage.setItem("is_darkmode", true)
-                }
                 
             }
         } catch(err){

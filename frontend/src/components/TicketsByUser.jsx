@@ -26,7 +26,7 @@ function LoadTicketsByUser() {
     //ticket solving popup
     const [solvePopup, setSolvePopup] = useState(false)
     const [ticketSolution ,setTicketSolution] = useState("")
-    const [solvedTicketId, setSolvedTicketId] = useState()//temporarily store the ID of the ticket that is being solved
+    const [solvedTicketId, setSolvedTicketId] = useState(0)//temporarily store the ID of the ticket that is being solved
     
     const currentUserEmail = sessionStorage.getItem("user")
     const isUserAdmin = sessionStorage.getItem("is_admin")
@@ -112,7 +112,8 @@ function LoadTicketsByUser() {
     }
     const solveTicket = async () => {
         // const solution = await axios.post('http://localhost:3000/ticekts/solveTickets', { solvedTicketId, currentUserEmail, ticketSolution })
-        const response = await fetch('192.168.3.55:3000/ticekts/solveTickets', {
+        console.log({ solvedTicketId, currentUserEmail, ticketSolution })
+        const response = await fetch('http://192.168.3.55:3000/ticekts/solveTickets', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -155,8 +156,7 @@ function LoadTicketsByUser() {
 
     return <>
         <section className="main-ticketsOnUser">
-            <p>Created by: {currentUserEmail}</p>
-            <p>--------------------------------</p>
+            <p className="ticketTypeTitle">Created by: {currentUserEmail}</p>
             <div className="tickets">
                 {ticketsByUser.map((ticket, index) =>
                     <li key={index}>

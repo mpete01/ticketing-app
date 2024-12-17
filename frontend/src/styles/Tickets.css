@@ -3,18 +3,31 @@
     line-break: auto;
 }
 
+.tickets {
+    background-color: rgba(48, 60, 115, 0.7);
+    height: 100%;
+    border-radius: 15px;
+    color: var(--color-primary);
+    padding: 5px;
+}
+
+.ticketTypeTitle {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
 .ticket-titles {
     text-decoration: underline;
     margin-bottom: 5px;
 }
 
 .ticket-textarea {
-    color: var(--color-secondary);
+    color: var(--color-primary);
     background: none;
     padding: 5px;
     width: 100%;
-    height: auto;
-    min-height: 100px;
+    height: fit-content;
+    min-height: fit-content;
 }
 
 .ticket-actions {

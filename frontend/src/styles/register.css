@@ -12,10 +12,6 @@ body {
     position: fixed;
 }
 
-.overlay {
-    background: rgba(49, 49, 49, 0.8);
-}
-
 .register-form {
     position: absolute;
     transform: translate(100%, 0%);
