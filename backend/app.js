@@ -57,15 +57,15 @@ app.get("/", (req,res) => {
 app.post('/users/register', async (req, res) => {
   const { name, email, password, department } = req.body
 
-  const trimmedName = name.trim()
-  const trimmedDepartment = department.trim()
-
+  /*const trimmedName = name.trim()
+  const trimmedDepartment = department.trim()*/
+  console.log({ name, email, password, department })
   //hash password with bcrypt 
   let hashedPassword = await bcrypt.hash(password, 10)
-
+  console.log(hashedPassword)
   //check if the user will have admin previliges
   let is_admin = false
-  if(trimmedDepartment === "IT" || trimmedDepartment === "Maintainence") {
+  if(name === "IT" || department === "Maintainence") {
     is_admin = true
   } else {
     is_admin = false
@@ -88,8 +88,9 @@ app.post('/users/register', async (req, res) => {
   else {
     storedUser = await db.query(
       `INSERT INTO users (username, email, password, department, is_admin)
-      VALUES ('${trimmedName}', '${email}', '${hashedPassword}', '${trimmedDepartment}', '${is_admin}')`
+      VALUES ('${name}', '${email}', '${hashedPassword}', '${department}', '${is_admin}')`
     )
+    console.log("New user successfully created")
     res.send("New user successfully registered")
   }
 })
@@ -336,7 +337,6 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
   let currentUserId = await db.query(
     `SELECT id, email FROM users WHERE email = '${currentUserEmail}' `
   )
-
   
   let titles = []
   let description = []
@@ -406,7 +406,7 @@ app.post('/tikcets/existingComments', async (req, res) => {
   const { commentTicketId, currentUserEmail } = req.body
 
   //const submittingUserId = await db.query(`SELECT id FROM users WHERE email = '${currentUserEmail}'`)
-
+  
   const existingComments = await db.query(`SELECT comment, created_by, created_at FROM ticket_comments WHERE ticket_id = '${commentTicketId}'`)// AND is_solved = false`)
 
   comments = []
@@ -432,7 +432,8 @@ app.post('/tikcets/existingComments', async (req, res) => {
 //SOLVE TICKETS
 app.post('/ticekts/solveTickets', async (req, res) => {
   const { solvedTicketId, currentUserEmail, ticketSolution } = req.body
-  const setIsSolved = await db.query(`UPDATE tickets SET is_solved = true, solution = '${ticketSolution}' WHERE id = '${solvedTicketId}'`, err => {
+  //console.log({ solvedTicketId, currentUserEmail, ticketSolution })
+  const setIsSolved = await db.query(`UPDATE tickets SET is_solved = true, solution = '${ticketSolution}' WHERE id = ${solvedTicketId}`, err => {
     if(err){
       throw err
     } else {
@@ -455,7 +456,6 @@ app.post('/tickets/solvedTickets', async (req, res) => {
     INNER JOIN departments d ON u.department = d.name
     WHERE u.email = '${loggedInUser}'`
   )
-
 
   const query = await db.query(`SELECT title, description, solution FROM tickets 
     WHERE is_solved = true AND department_id = '${user_departmentId[0].department_id}'`
