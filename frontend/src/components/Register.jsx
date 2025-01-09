@@ -13,20 +13,6 @@ function Register({ onClosePopup }){
     const [showPassword, setShowPassword] = useState(false)
     const [failedPopup, setFailedPopup] = useState(false)
 
-    //check the user's color theme preference on loading
-    /*useEffect(()=> {
-        if(localStorage.getItem("is_darkmode") === null){
-            localStorage.setItem("is_darkmode", 'false')
-        }
-        else if(localStorage.getItem("is_darkmode") === 'true'){
-            root.style.setProperty('--color-primary', '#1E201E')
-            root.style.setProperty('--color-secondary', 'rgb(244, 247, 254)')
-        } else if(localStorage.getItem("is_darkmode") === 'false'){
-            root.style.setProperty('--color-primary', 'rgb(244, 247, 254)')
-            root.style.setProperty('--color-secondary', 'rgb(48, 60, 115)')
-        }
-    }, [])*/
-
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
     };
@@ -44,7 +30,6 @@ function Register({ onClosePopup }){
                 if(department === "Select your department"){
                     toast.error("No department was chosen")
                 } else{
-                    // let sentData = await axios.post('http://localhost:3000/users/register', { name, email, password, department })
                     const response = await fetch('http://192.168.3.55:3000/users/register', {
                         method: 'POST',
                         headers: {
@@ -54,19 +39,22 @@ function Register({ onClosePopup }){
                     })
                     const sentData = await response.json()
                     console.log(sentData)
-                    if(sentData === "User already registered"){
+                    if(sentData.result === "already registered"){
                         toast.error("User already registered")
-                    } else {
+                    } else if(sentData.result === "success") {
                         toast.success("User successfully registered")
+                    } else {
+                        toast.warn("An error occoured")
                     }
                 }
             } catch(err){
                 console.log(err)
+                toast.error("An error occoured")
             }
         }
         //ask the user to enter valid email and password
         else {
-            toast.error()
+            toast.error("Enter valid crednetials")
             setFailedPopup(!failedPopup)
             setEmail("")
             setPassword("")
@@ -89,7 +77,6 @@ function Register({ onClosePopup }){
                         <option className="register-form-department_option" value="Marketing" onClick={(e) => setDepartment(e.target.value)}>Marketing</option>
                         <option className="register-form-department_option" value="Finance" onClick={(e) => setDepartment(e.target.value)}>Finance</option>
                         <option className="register-form-department_option" value="Open Office" onClick={(e) => setDepartment(e.target.value)}>Open Office</option>
-                        option
                     </select>
                     <div className="password-input-field">
                         <input type={showPassword ? "text" : "password"} value={password.trim()} className="register-form-password input" id="register-password" placeholder="Enter a password" onChange={(e) => setPassword(e.target.value)} />

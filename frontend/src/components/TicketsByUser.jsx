@@ -21,12 +21,14 @@ function LoadTicketsByUser() {
     const [commentPopup, setCommentPopup] = useState(false)
     const [existingComments, setExistingComments] = useState([]) //store already existing comments
     const [exisitngCommentsbyUsers, setExisitngCommentsbyUsers] = useState([]) //corresponding user who created the comment
-    const [existingCommentDate, setExistingCommentDate] = useState([]) //corresponding date to the exisitng comment
     const [newComment, setNewComment] = useState("")
     //ticket solving popup
     const [solvePopup, setSolvePopup] = useState(false)
     const [ticketSolution ,setTicketSolution] = useState("")
     const [solvedTicketId, setSolvedTicketId] = useState(0)//temporarily store the ID of the ticket that is being solved
+
+    //temporary index storage
+    const [tempIndex, setTempIndex] = useState("")
     
     const currentUserEmail = sessionStorage.getItem("user")
     const isUserAdmin = sessionStorage.getItem("is_admin")
@@ -61,10 +63,10 @@ function LoadTicketsByUser() {
         byUser()
     },[])
 
+
     //delete ticket from database based on its index (only for admins)
     const deleteTicket = async (index) => {
         const delTicketIndex = ticketIndex[index]
-        // const delTask = await axios.post("http://localhost:3000/tickets/deleteTicket", { delTicketIndex })
         const response = await fetch('http://192.168.3.55:3000/tickets/deleteTicket', {
             method: 'POST',
             headers: {
@@ -73,21 +75,26 @@ function LoadTicketsByUser() {
             body: JSON.stringify({ delTicketIndex })
         })
         const delTask = await response.json()
-        toast.success("Ticket successfully deleted")
-        setTimeout(() => {
-            location.reload()
-        }, 2000);
+
+        if(delTask.result == "Ticket deleted successfully") {
+            toast.success("Ticket deleted successfully")
+            setTimeout(() => {
+                location.reload()
+            }, 1500);
+        } else {
+            toast.warn("Something went wrong")
+        }
     }
+
 
     //displays the popup for the UI where a ticket can be reassigned to other users
     const assignToUserPopup = (index) => {
-        setTicketToBeAssigned(ticketIndex[index])
         setAssignmentPopup(!assignmentPopup)
+        setTicketToBeAssigned(ticketIndex[index])
     }
-    //reassigns the ticket to given user in
+    //reassigns the ticket to given user
     const ticketAssignment = async () => {
-        // const response = await axios.post('http://localhost:3000/tickets/reassignTickets', { ticketToBeAssigned, assignedToUser })
-        const res = await fetch('192.168.3.55:3000/tickets/reassignTickets', {
+        const res = await fetch('http://192.168.3.55:3000/tickets/reassignTickets', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -95,7 +102,18 @@ function LoadTicketsByUser() {
             body: JSON.stringify({ ticketToBeAssigned, assignedToUser })
         })
         const response = await res.json()
-        alert(response.result)
+
+        //handle response data accordingly
+        if(response.result === "No user found") {
+            toast.error("No user found")
+        } else if(response.result === "Ticket ownership changed successfully") {
+            toast.success("Ticket ownership changed successfully")
+            setTimeout(() => {
+                location.reload()
+            }, 1500);
+        } else {
+            toast.warn("Sorry, something went wrong")
+        }
     }
     //closes the reassignment popup window
     const closeAssignmentPopup = () => {
@@ -103,6 +121,7 @@ function LoadTicketsByUser() {
         setAssignedToUser("")
         setAssignmentPopup(!assignmentPopup)
     }
+
 
     //ticekt solve popup
     const solveTicketPopup = async (index) => {
@@ -121,32 +140,60 @@ function LoadTicketsByUser() {
             body: JSON.stringify({ solvedTicketId, currentUserEmail, ticketSolution })
         })
         const solution = await response.json()
-        console.log(solution)
         
+        if(solution.result == "success") {
+            toast.success("Ticket solved successfully")
+            setTimeout(() => {
+                location.reload()
+            }, 1500);
+        } else {
+            toast.warn("Something went wrong")
+        }
     }
     const closeTicketPopup = () => {
         setSolvedTicketId()
         setSolvePopup(!solvePopup)
     }
 
+    
     //displays the comment popup for the UI to submit new and view existing comments
     const openCommentPopup = async (index) => {
-        const commentTicketId = ticketIndex[index] //id if the ticket where the new comment will be created
         setCommentPopup(!commentPopup)
-        // const existingCommentsResponse = await axios.post('http://localhost:3000/tikcets/existingComments', { commentTicketId, currentUserEmail })
-        const response = await fetch('192.168.3.55:3000/tikcets/existingComments', {
+        setTempIndex(ticketIndex[index])
+        const commentTicketId = ticketIndex[index] //id if the ticket where the new comment will be created
+        console.log(commentTicketId)
+        const response = await fetch('http://192.168.3.55:3000/tikcets/existingComments', {
             method: 'POST',
             headers: {
-                'Content-Type': 'applicaiton/json'
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ commentTicketId, currentUserEmail })
+            body: JSON.stringify({ commentTicketId })
         })
 
         const existingCommentsResponse = await response.json()
 
         setExistingComments(existingCommentsResponse.comments)
         setExisitngCommentsbyUsers(existingCommentsResponse.created_by)
-        setExistingCommentDate(existingCommentsResponse.created_at)
+    }
+    //upload new comment
+    const addNewComment = async () => {
+        console.log(tempIndex)
+        const response = await fetch('http://192.168.3.55:3000/tickets/addNewComment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ tempIndex, currentUserEmail, newComment })
+        })
+        const res = await response.json()
+        if(res.result === "success") {
+            toast.success("Comment added successfully")
+            setTimeout(() => {
+                location.reload()
+            }, 1500);
+        } else {
+            toast.error("Something went wrong")
+        }
     }
     //close comment UI
     const closeCommentPopup = () => {
@@ -182,12 +229,11 @@ function LoadTicketsByUser() {
             <div className="popup-open">
             <p>Create a new comment</p>
             <textarea className="popup-open_email" placeholder="Enter the comment" onChange={(e) => setNewComment(e.target.value)}/> <br />
-            <button type="submit" className="comment-submit-btn">Add comment</button> <br />
+            <button type="submit" className="comment-submit-btn" onClick={addNewComment}>Add comment</button> <br />
             {existingComments.map((comment, index) =>
                     <li key={index} className="commentPopup-existing-comments">
                         <p className="existing-comment commentData">{comment}</p>
                         <p className="comment-by-user commentData">{exisitngCommentsbyUsers[index]}</p>
-                        <p className="comment-date commentData">{existingCommentDate[index]}</p>
                     </li>
             )}
             <button onClick={closeCommentPopup} className="close-comment-popup">Close</button>
