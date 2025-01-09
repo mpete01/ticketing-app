@@ -1,3 +1,6 @@
+//May God himself those brave souls who dare to wander deep into this codebase
+//because nobody else will, even I, the creator don't know how this worls and what it does
+
 const express = require('express');
 require('dotenv').config()
 const pgp = require('pg-promise')(/* options */)
@@ -57,41 +60,41 @@ app.get("/", (req,res) => {
 app.post('/users/register', async (req, res) => {
   const { name, email, password, department } = req.body
 
-  /*const trimmedName = name.trim()
-  const trimmedDepartment = department.trim()*/
   console.log({ name, email, password, department })
-  //hash password with bcrypt 
-  let hashedPassword = await bcrypt.hash(password, 10)
-  console.log(hashedPassword)
-  //check if the user will have admin previliges
-  let is_admin = false
-  if(name === "IT" || department === "Maintainence") {
-    is_admin = true
+  //check if user is already registered, if already registered length of the query is bigger 0
+  const isUserAlreadyRegistered = await db.query(`SELECT id FROM users WHERE email = '${email}'`)
+  if(isUserAlreadyRegistered.length > 0) {
+    res.send({
+      result: "already registered"
+    })
   } else {
-    is_admin = false
-  }
+      try{
+        //hash password with bcrypt 
+        const hashedPassword = await bcrypt.hash(password, 10)
 
-  let query = await db.query(
-    `SELECT username, email, password FROM users WHERE email = '${email}'`,
-    (err) => {
-      if(err){
-        throw err
+        //check if the user will have admin previliges
+        let is_admin = false
+        if(name === "IT" || department === "Maintainence") {
+          is_admin = true
+        } else {
+          is_admin = false
+        }
+
+        //if user is not registered update database with the user's credentials and hashed password 
+        const registerUser = await db.query(`INSERT INTO users (username, email, password, department, is_admin)
+          VALUES ('${name}', '${email}', '${hashedPassword}', '${department}', '${is_admin}')`
+        )
+
+        res.send({
+          result: "success"
+        })
+
+      } catch(err){
+        res.send({
+          error: err,
+          result: "error occoured"
+        })
       }
-    }
-  )
-  //check if user is already registered, if yes send back a message to client
-  if(query.length > 0) {
-    console.log("User already registered")
-    res.send("User already registered")
-  }
-  //if user is not registered update database with the user's credentials and hashed password 
-  else {
-    storedUser = await db.query(
-      `INSERT INTO users (username, email, password, department, is_admin)
-      VALUES ('${name}', '${email}', '${hashedPassword}', '${department}', '${is_admin}')`
-    )
-    console.log("New user successfully created")
-    res.send("New user successfully registered")
   }
 })
 
@@ -156,44 +159,57 @@ app.post('/users/login', async (req, res) => {
 
 //UPLOAD NEW TICKET TO DATABASE
 app.post('/tickets/uploadNewTicket', async (req, res) => {
-  const { newTicketTitle, newTicket, loggedInUser, newTicketForUser, time } = req.body
-  let department;
-  let departmentId;
+  const { newTicketTitle, newTicket, loggedInUser, newTicketForUser } = req.body
 
-  //console.log({ newTicketTitle, newTicket, loggedInUser, newTicketForUser, time })
-  const keywordActions = {
+  //get the ID of the user who crreated the ticket
+  const createdByUserId = await db.query(`SELECT id FROM users WHERE email = '${loggedInUser}'`)
+  //get the ID of the iwner's ID
+  const owner_id = await db.query(`SELECT id FROM users WHERE email = '${newTicketForUser}'`)
+
+  if (owner_id.length === 0) {
+    return res.send({
+      result: "No user found, please enter a valid email address"
+    })
+  }
+  //get the owner's department's ID
+  const owners_department_id = await db.query(`SELECT d.id
+    FROM departments d
+    JOIN users u ON u.department = d.name
+    WHERE u.id = ${owner_id[0].id};`
+  )
+  /*const keywordActions = {
     phone: "Maintainence",
     storage: "IT",
   };
 
-      const wordSearch = () => {
-        const actions = [];
-            Object.keys(keywordActions).forEach((keyword) => {
-                if (newTicket.toLowerCase().includes(keyword)) {
-                  actions.push(keywordActions[keyword]);
-                }
-              });
-        return actions;
-      };    
+  const wordSearch = () => {
+    const actions = [];
+    Object.keys(keywordActions).forEach((keyword) => {
+      if (newTicket.toLowerCase().includes(keyword)) {
+        actions.push(keywordActions[keyword]);
+      }
+    });
+    return actions;
+  };
       
-      const search = () => {
-        const actions = wordSearch();
-          actions.forEach((action) => {
-            switch (action) {
-              case "Maintainence":
-                department = "Maintainence"
-                console.log("Assigned to Maintainence")
-                break;
-              case "IT":
-                department = "IT"
-                console.log("Assigned to IT")
-                break;
-              default:
-                console.log("No assignment action taken.");
-            }
-          });
-      };
-      search()
+  const search = () => {
+    const actions = wordSearch();
+      actions.forEach((action) => {
+        switch (action) {
+          case "Maintainence":
+            department = "Maintainence"
+            console.log("Assigned to Maintainence")
+            break;
+          case "IT":
+            department = "IT"
+            console.log("Assigned to IT")
+            break;
+          default:
+            console.log("No assignment action taken.");
+        }
+      });
+  };
+  search()
 
       if(department !== undefined) {
         departmentId = await db.query(
@@ -204,65 +220,41 @@ app.post('/tickets/uploadNewTicket', async (req, res) => {
         const userDepartment = await db.query(
           `SELECT department FROM users WHERE email = '${newTicketForUser}'`
         )
-        
-        departmentId = await db.query(
-          `SELECT id from departments WHERE name = '${userDepartment[0].department}'`
+        console.log(userDepartment)
+        /*departmentId = await db.query(
+          `SELECT id from departments WHERE name = '${userDepartment[0].department}'`//userDepartment[0].
         )
-      }
-      try {
-          const loggedInUserid = await db.query(
-            `SELECT id FROM users
-            WHERE email='${loggedInUser}'`
-          )
-      
-          //add the ticket to database (not yet assigned to user)
-          const addNewTicket = await db.query(
-            `INSERT INTO tickets (title, description, created_at, creator_id, department_id, is_solved)
-            VALUES ('${newTicketTitle}', '${newTicket}', '${time}','${loggedInUserid[0].id}', '${departmentId[0].id}', false);`,
-            (err) => {
-              if(err){
-                throw err
-              }
-            }
-          )
-      
-          //assign newly created ticket to specified user
-          const getNewTicketId = await db.query(
-            `SELECT id FROM tickets
-            WHERE created_at = '${time}'`
-          )
-      
-          //assign ticekt to the user's department the ticket is assigned to
-          const assignedToUsersDepartment = await db.query(`
-            SELECT id FROM users WHERE email = '${newTicketForUser}'
-          `)
-      
-          const assignNewTicket = await db.query(
-            `INSERT INTO ticket_assignments (ticket_id, user_id)
-            VALUES ('${getNewTicketId[0].id}', '${assignedToUsersDepartment[0].id}');`,
-            (err) => {
-              if(err){
-                throw err
-              }
-            }
-          )
-          res.json({
-            result: "Ticket successfully created"    
-          })
-        } catch (err) {
-          console.error("Error: " + err)
-          res.json({
-            error: err,
-            errorMsg: "An error occoured"
-          })
+      }*/
+
+  try {    
+    //add the ticket to database (not yet assigned to user)
+    const addNewTicket = await db.query(
+      `INSERT INTO tickets (title, description, creator_id, owners_department_id, is_solved, owner_id)
+        VALUES ('${newTicketTitle}', '${newTicket}', ${createdByUserId[0].id}, ${owners_department_id[0].id}, false, ${owner_id[0].id});`,
+      (err) => {
+        if(err){
+          throw err
         }
+      }
+    )
+  
+    res.json({
+      result: "Ticket successfully created"    
+    })
+  } catch (err) {
+      console.error(err)
+      res.json({
+        error: err,
+        errorMsg: "An error occoured"
+    })
+  }
 })
 
 
 //GET TICKETS FROM DATABASE OF THE CURRENT LOGGED IN USER'S DEPARTMENT
 app.post('/tickets/getDepartmentTickets', async (req, res) => {
   const { currentUserEmail } = req.body
-
+  
   const currentUserDepartment = await db.query(
     `SELECT department FROM users WHERE email = '${currentUserEmail}'`
   )
@@ -271,29 +263,30 @@ app.post('/tickets/getDepartmentTickets', async (req, res) => {
   let titles = []
   let descriptions = []
   let department = []
-  let created_at = []
+  try {
+    const onDepartment = await db.query(`
+      SELECT t.id, t.title, t.description, t.id
+      FROM tickets t
+      INNER JOIN departments d ON t.owners_department_id = d.id
+      WHERE d.name = '${currentUserDepartment[0].department}' AND t.is_solved = false;
+    `)
+    for(let i = 0; i < onDepartment.length; i++){
+      ids.push(onDepartment[i].id)
+      titles.push(onDepartment[i].title)
+      descriptions.push(onDepartment[i].description)
+      department.push(onDepartment[i].department_name)
+    }
 
-  const onDepartment = await db.query(`
-    SELECT t.id, t.title, t.description, t.id
-    FROM tickets t
-    INNER JOIN departments d ON t.department_id = d.id
-    WHERE d.name = '${currentUserDepartment[0].department}' AND t.is_solved = false;
-  `)
-  for(let i = 0; i < onDepartment.length; i++){
-    ids.push(onDepartment[i].id)
-    titles.push(onDepartment[i].title)
-    descriptions.push(onDepartment[i].description)
-    department.push(onDepartment[i].department_name)
-    created_at.push(onDepartment[i].created_at)
+    res.send({
+      "ids": ids,
+      "title": titles,
+      "tickets": descriptions,
+      "department": department
+    })
+  } catch (err) {
+    console.log(err)
+    res.send(err)
   }
-
-  res.send({
-    "ids": ids,
-    "title": titles,
-    "tickets": descriptions,
-    "department": department,
-    "created_at": created_at
-  })
 })
 
 
@@ -301,32 +294,31 @@ app.post('/tickets/getDepartmentTickets', async (req, res) => {
 app.post('/tickets/getTicketsOnUser', async (req, res) => {
   const { currentUserEmail } = req.body
   
-  const currentUserId = await db.query(
-    `SELECT id FROM users WHERE email = '${currentUserEmail}'`
-  )
-
   let titles = []
   let descriptions = []
   let ids = []
-  const onUser = await db.query(
-    `SELECT t.id, t.title, t.description, t.id
-    FROM tickets t
-    INNER JOIN ticket_assignments ta ON t.id = ta.ticket_id
-    INNER JOIN users u ON ta.user_id = u.id
-    WHERE u.id = '${currentUserId[0].id}' AND t.is_solved = false
-    ORDER BY t.id ASC`
-  )
+  try {
+    const onUser = await db.query(`SELECT t.id, t.title, t.description, t.is_solved, t.solution
+      FROM tickets t
+      JOIN users u ON t.owner_id = u.id
+      WHERE u.email = '${currentUserEmail}' AND t.is_solved = FALSE
+      ORDER BY t.id ASC`
+    )
 
-  for(let i = 0; i < onUser.length; i++){
-    ids.push(onUser[i].id)
-    titles.push(onUser[i].title)
-    descriptions.push(onUser[i].description)
+    for(let i = 0; i < onUser.length; i++){
+      ids.push(onUser[i].id)
+      titles.push(onUser[i].title)
+      descriptions.push(onUser[i].description)
+    }
+    res.send({
+      "ids": ids,
+      "title": titles,
+      "tickets": descriptions
+    })
+  } catch (err) {
+      console.log(err)
+      res.send(err)
   }
-  res.send({
-    "ids": ids,
-    "title": titles,
-    "tickets": descriptions
-  })
 })
 
 
@@ -363,69 +355,101 @@ app.post('/tickets/getTicketsByUser', async (req, res) => {
 //DELETE TICKET FROM DATABASE
 app.post('/tickets/deleteTicket', async (req, res) => {
   const { delTicketIndex } = req.body
+  //delete ticket from database 
+  try {
+    const deleteTicket = await db.query(
+      `DELETE FROM tickets WHERE id = '${delTicketIndex}'`
+    )
 
-  //delete tickt assigment from database to prevent foreign key contraints
-  const deleteForeginKey = await db.query(
-    `DELETE FROM ticket_assignments WHERE ticket_id = '${delTicketIndex}'`
-  )
-
-  //delete actual ticket from database 
-  const query = await db.query(
-    `DELETE FROM tickets WHERE id = '${delTicketIndex}'`
-  )
-
-  res.json({
-    "result": "Ticket deleted successfully"
-  })
+    res.json({
+      result: "Ticket deleted successfully"
+    })
+  } catch (err) {
+    res.send({
+      result: err
+    })
+  }
 })
 
 
-//TIKCET REASSIGNMENT
+//CHANGE OWNER OF THE TICKET
 app.post('/tickets/reassignTickets', async (req, res) => {
   const { ticketToBeAssigned, assignedToUser } = req.body
 
   //get the ID of the user that is being assigned
-  const newUserId = await db.query(`SELECT id FROM users WHERE email = '${assignedToUser}'`)
+  const newOwnerId = await db.query(`SELECT id FROM users WHERE email = '${assignedToUser}'`)
 
-  const reassignment = await db.query(`
-    UPDATE ticket_assignments
-    SET user_id = '${newUserId[0].id}'
-    WHERE ticket_id = '${ticketToBeAssigned}';`, (err) => {
-      if(err){
-        throw err
-      }
+  if(newOwnerId.length === 0) {
+    return res.send({
+      result: "No user found"
     })
-  res.json({
-    "result": `Ticket successfully reassigned to ${assignedToUser}`
-  })
+  }
+
+  try {
+    const changeOwner = await db.query(`UPDATE tickets
+      SET owner_id = ${newOwnerId[0].id}
+      WHERE id = ${ticketToBeAssigned}`, (err) => {
+        if(err){
+          throw err
+        }
+      })
+    res.json({
+      "result": `Ticket ownership changed successfully`
+    })
+  } catch (err) {
+      console.log(err)
+      res.send({
+        result: err
+      })
+  }
 })
 
 
-//LOAD ALREADY EXISTING TICKETS
+//LOAD ALREADY EXISTING TICKET COMMENTS
 app.post('/tikcets/existingComments', async (req, res) => {
-  const { commentTicketId, currentUserEmail } = req.body
-
-  //const submittingUserId = await db.query(`SELECT id FROM users WHERE email = '${currentUserEmail}'`)
+  const { commentTicketId } = req.body
   
-  const existingComments = await db.query(`SELECT comment, created_by, created_at FROM ticket_comments WHERE ticket_id = '${commentTicketId}'`)// AND is_solved = false`)
+  try{
+    const existingComments = await db.query(`SELECT comment, created_by FROM ticket_comments WHERE ticket_id = '${commentTicketId}'`)
 
-  comments = []
-  created_by = []
-  created_at = []
-  for(let i = 0; i < existingComments.length; i++){
-    comments.push(existingComments[i].comment)
-    created_by.push(existingComments[i].created_by)
-    created_at.push(existingComments[i].created_at)
+    comments = []
+    created_by = []
+
+    for(let i = 0; i < existingComments.length; i++){
+      comments.push(existingComments[i].comment)
+      created_by.push(existingComments[i].created_by)
+    }
+    
+    res.send({
+      "comments": comments,
+      "created_by": created_by
+    })
+  } catch(err) {
+    res.send({
+      result: "error"
+    })
   }
-  
-  res.send({
-    "comments": comments,
-    "created_by": created_by,
-    "created_at": created_at
-  })
-  /*const submitNewComment = await db.query(`INSERT INTO ticket_comments (ticket_id, user_id, comment, created_at)
-    VALUES ('${commentTicketId}', '${submittingUserId}', :comment)`
-  )*/
+})
+
+
+//ADD NEW COMMENT
+app.post('/tickets/addNewComment', async (req, res) => {
+  const { tempIndex, currentUserEmail, newComment } = req.body
+
+  console.log(tempIndex)
+
+  try {
+    const addComment = await db.query(`INSERT INTO ticket_comments (ticket_id, comment, created_by)
+      VALUES (${tempIndex}, '${newComment}', '${currentUserEmail}')`)//dd
+    res.send({
+      result: "success"
+    })
+  } catch(err) {
+      console.log(err)
+      res.send({
+        result: "error"
+      })
+  }
 })
 
 
@@ -433,49 +457,59 @@ app.post('/tikcets/existingComments', async (req, res) => {
 app.post('/ticekts/solveTickets', async (req, res) => {
   const { solvedTicketId, currentUserEmail, ticketSolution } = req.body
   //console.log({ solvedTicketId, currentUserEmail, ticketSolution })
-  const setIsSolved = await db.query(`UPDATE tickets SET is_solved = true, solution = '${ticketSolution}' WHERE id = ${solvedTicketId}`, err => {
-    if(err){
-      throw err
-    } else {
-      res.json({
-        result: `Ticket is solved. It was solved by ${currentUserEmail}`
-      })
-    }
-  })
+  try{
+    const setIsSolved = await db.query(`UPDATE tickets SET is_solved = true, solution = '${ticketSolution}' WHERE id = ${solvedTicketId}`, err => {
+      if(err){
+        throw err
+      }
+    })
+    
+    res.send({
+      result: "success"
+    })
+  } catch(err){
+    console.log(err)
+    res.send({
+      result: "err"
+    })
+  }
 })
 
 
 //GET ALREADY SOLVED TICKETS
 app.post('/tickets/solvedTickets', async (req, res) => {
   const { loggedInUser } = req.body
-  
-  //get current user's user ID and department ID
-  const user_departmentId = await db.query(`
-    SELECT u.id, d.id AS department_id
-    FROM users u
-    INNER JOIN departments d ON u.department = d.name
-    WHERE u.email = '${loggedInUser}'`
-  )
 
-  const query = await db.query(`SELECT title, description, solution FROM tickets 
-    WHERE is_solved = true AND department_id = '${user_departmentId[0].department_id}'`
-  )
-  
-  let title = []
-  let description = []
-  let solution = []
+  try{
+      const query = await db.query(`SELECT t.*
+          FROM tickets t
+          JOIN departments d ON t.owners_department_id = d.id
+          JOIN users u ON u.department = d.name
+          WHERE u.email = '${loggedInUser}' AND t.is_solved = TRUE;`
+      )
+      
+      let title = []
+      let description = []
+      let solution = []
 
-  for(let i = 0; i < query.length; i++){
-    title.push(query[i].title)
-    description.push(query[i].description)
-    solution.push(query[i].solution)
+      for(let i = 0; i < query.length; i++){
+        title.push(query[i].title)
+        description.push(query[i].description)
+        solution.push(query[i].solution)
+      }
+
+      res.json({
+        result: "success",
+        title: title,
+        description: description,
+        solution: solution
+      })
+  } catch(err){
+      res.send({
+        result: "error",
+        error: err
+      })
   }
-
-  res.json({
-    title: title,
-    description: description,
-    solution: solution
-  })
 })
 
 
